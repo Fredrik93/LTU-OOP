@@ -5,18 +5,24 @@ public class MyTestBank
 
     public static void main(String[] args)
     {
-        BankLogic bank = new BankLogic();
+        freull0.BankLogic bank = new BankLogic();
         // create customer
-        bank.createCustomer("Mike", "doe", "1234");
-        //   bank.createCustomer("John", "doe", "122345");
-        //   System.out.println(bank.getAllCustomers());
-
-        //   bank.changeCustomerName("Fred", "ull", "1234");
-
-        //   System.out.println(bank.getAllCustomers());
-
-        bank.createSavingsAccount("1234");
-        bank.createSavingsAccount("1234");
+        bank.createCustomer("Mike", "doe", "7505121231");
+        bank.createCustomer("Johnny", "doe", "12");
+        bank.createSavingsAccount("12");
+     /*   bank.createSavingsAccount("7505121231");
+        bank.createSavingsAccount("7505121231");
+        bank.createSavingsAccount("7505121231");
+        bank.createSavingsAccount("7505121231");
+        bank.createSavingsAccount("7505121231");
+        bank.createSavingsAccount("7505121231");
+        bank.deposit("7505121231", 1001, 500);
+        bank.withdraw("7505121231", 1001, 1);
+        System.out.println(bank.getCustomer("12"));
+        System.out.println(bank.getCustomer("7505121231"));
+        System.out.println(bank.getAccount("7505121231", 1004));
+        System.out.println(bank.closeAccount("12",1001));*/
+        System.out.println(bank.getCustomer("12"));
 
     }
 }

@@ -7,18 +7,29 @@ import java.util.Locale;
 
 /**
  * Inlämningsuppgift1 Syfte:
+ * * Definierar fält för ett konto
  *
  * @author Fredrik Ullman, freull-0
  */
 
 public class Account
 {
-    private final BigDecimal amount;
+    private BigDecimal amount;
     private final BigDecimal interestRate;
-    private int accountNumber;
+    private final int accountNumber;
     private static int lastAccountNumber = 1000;
-    private final AccountType accountType;
+    private final freull0.AccountType accountType;
 
+    /**
+     * Konstruktorn. Används för att skapa ny instans av objektet
+     *
+     * @param amount
+     *         saldo
+     * @param interestRate
+     *         räntesats
+     * @param accountType
+     *         kontotypen
+     */
     public Account(BigDecimal amount, BigDecimal interestRate, AccountType accountType)
     {
 
@@ -36,9 +47,14 @@ public class Account
         return amount;
     }
 
-    public BigDecimal getInterestRate()
+    public void depositAmount(BigDecimal amount)
     {
-        return interestRate;
+        this.amount = this.amount.add(amount);
+    }
+
+    public void withdrawAmount(BigDecimal amount)
+    {
+        this.amount = this.amount.subtract(amount);
     }
 
     public int getAccountNumber()
@@ -46,27 +62,69 @@ public class Account
         return accountNumber;
     }
 
-    public AccountType getAccountType()
+    /**
+     * hjälpmetod för att visa en formatterad sträng vid stängning av konto
+     *
+     * @return en test som visas vid stängning av konto
+     */
+    public String closedAccountMessage()
     {
-        return accountType;
+
+        // Lägg till önskade mönster för fälten
+        DecimalFormat decimalFormatAmount = new DecimalFormat("###,##0.00", setSymbols());
+        DecimalFormat decimalFormatInterestRate = new DecimalFormat("0.00", setSymbols());
+
+        // Formattera summan
+        String formattedAmount = decimalFormatAmount.format(this.amount);
+
+        // Räkna ut räntesatsen
+        BigDecimal calculcatedInterestRateReturn = calculateInterestRate(interestRate, amount);
+
+        // Formattera räntesatsen
+        String formattedInterestRate = decimalFormatInterestRate.format(calculcatedInterestRateReturn);
+
+        return accountNumber + " " + formattedAmount + " kr " + accountType.getName() + " " + formattedInterestRate + " kr";
     }
 
+    /**
+     * @param interestRate
+     *         räntesatsen
+     * @param amount
+     *         saldo
+     * @return räntan i kronor
+     */
+    private BigDecimal calculateInterestRate(BigDecimal interestRate, BigDecimal amount)
+    {
+        BigDecimal rate = interestRate.divide(new BigDecimal(100));
+        return rate.multiply(amount);
+    }
+
+    /**
+     * Formatterar kontoinformationen.
+     */
     @Override
     public String toString()
     {
-        // Create a DecimalFormatSymbols object for customizing symbols
-        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.GERMANY);
-        symbols.setDecimalSeparator(',');
+        // Lägg till önskade mönster för fälten
+        DecimalFormat decimalFormatAmount = new DecimalFormat("###,##0.00", setSymbols());
+        DecimalFormat decimalFormatInterestRate = new DecimalFormat("0.0", setSymbols());
 
-        // Define a DecimalFormat with a pattern and the custom symbols
-        DecimalFormat decimalFormatAmount = new DecimalFormat("0.00", symbols);
-        DecimalFormat decimalFormatInterestRate = new DecimalFormat("0.0", symbols);
-
-        // Format the BigDecimal to a string. and add two decimals
+        //Formattera summan
         String formattedAmount = decimalFormatAmount.format(this.amount);
-        // Format interest rate as well. both are comma separated
+
+        // Formattera räntesatsen
         String formattedInterestRate = decimalFormatInterestRate.format(this.interestRate);
 
         return accountNumber + " " + formattedAmount + " kr " + accountType.getName() + " " + formattedInterestRate + " %";
     }
+
+    /** Används för att lägga till rätt symboler e.g., komma-separerade värden */
+    private DecimalFormatSymbols setSymbols()
+    {
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.GERMANY);
+        symbols.setGroupingSeparator(' ');
+        symbols.setDecimalSeparator(',');
+        return symbols;
+    }
+
 }
