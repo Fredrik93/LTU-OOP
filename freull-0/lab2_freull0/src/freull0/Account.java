@@ -12,9 +12,9 @@ import java.util.Locale;
  * @author Fredrik Ullman, freull-0
  */
 
-public class Account
+abstract class Account
 {
-    private BigDecimal amount;
+    protected BigDecimal amount;
     private final BigDecimal interestRate;
     private final int accountNumber;
     private static int lastAccountNumber = 1000;
@@ -52,10 +52,10 @@ public class Account
         this.amount = this.amount.add(amount);
     }
 
-    public void withdrawAmount(BigDecimal amount)
-    {
+    abstract void withdrawAmount(BigDecimal amount);
+    /*{
         this.amount = this.amount.subtract(amount);
-    }
+    }*/
 
     public int getAccountNumber()
     {

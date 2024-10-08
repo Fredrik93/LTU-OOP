@@ -271,7 +271,8 @@ public class BankLogic
         {
             if(c.getpNo().equals(pNo))
             {
-                Account newAccount = new Account(new BigDecimal(0), new BigDecimal("2.4"), AccountType.SPARKONTO);
+                Account newAccount = new SavingsAccount(new BigDecimal(0), new BigDecimal("2.4"),
+                        AccountType.SPARKONTO);
                 c.addAccountToCustomer(newAccount);
                 return newAccount.getAccountNumber();
             }
@@ -362,5 +363,15 @@ public class BankLogic
         }
 
         return removedAccountsString.toString();
+    }
+
+    public List<String> getTransactions(String pNo, int accountId)
+    {
+        return null;
+    }
+
+    public int createCreditAccount(String pNO)
+    {
+        return 0;
     }
 }
