@@ -71,9 +71,48 @@ public class BankLogic
      *         kontonummer
      * @param amount
      *         saldo
+     * @param accountType
+     *         kontotyp
      * @return flagga som indikerar om insättningen är godkänd
      */
     public boolean withdraw(String pNo, int accountNumber, int amount)
+    {
+        Customer customer = findCustomer(pNo);
+        Account account = findAccount(customer, accountNumber);
+        if(account != null)
+        {
+            if(account.getAccountType().equals(AccountType.SPARKONTO))
+            {
+                if(account.getAmount().intValue() >= amount && amount > 0)
+                {
+                    account.withdrawAmount(BigDecimal.valueOf(amount));
+                    return true;
+                }
+            }
+            //Else-if för läsbarhet. hade räckt med if och sedan else.
+            else if(account.getAccountType().equals(AccountType.KREDITKONTO))
+            {
+                {
+                    account.withdrawAmount(BigDecimal.valueOf(amount));
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Används för att ta pengar på ett konto
+     *
+     * @param pNo
+     *         personnummret
+     * @param accountNumber
+     *         kontonummer
+     * @param amount
+     *         saldo
+     * @return flagga som indikerar om insättningen är godkänd
+     */
+    public boolean withdrawFromCreditAccount(String pNo, int accountNumber, int amount)
     {
         Customer customer = findCustomer(pNo);
         Account account = findAccount(customer, accountNumber);
@@ -372,6 +411,16 @@ public class BankLogic
 
     public int createCreditAccount(String pNO)
     {
+        Customer customer = findCustomer(pNO);
+
+        BigDecimal amount = BigDecimal.ZERO;
+        BigDecimal interestRate = new BigDecimal("1.1");
+        CreditAccount creditAccount = new CreditAccount(amount, interestRate, AccountType.KREDITKONTO);
+        if(customer != null)
+        {
+            customer.addAccountToCustomer(creditAccount);
+            return 1;
+        }
         return 0;
     }
 }

@@ -7,13 +7,11 @@ public class MyTestBank
     {
         BankLogic bank = new BankLogic();
         bank.createCustomer("Jim", "Nilsson", "666");
-        bank.createSavingsAccount("666");
-        bank.deposit("666", 1001, 1000);
+        bank.createCreditAccount("666");
 
-        System.out.println(bank.getCustomer("666"));
-
-        System.out.println(bank.withdraw("666", 1001, 500));
-        System.out.println(bank.getCustomer("666"));
+        System.out.println(bank.getAccount("666", 1001));
+        bank.withdraw("666", 1001, 10000);
+        System.out.println(bank.getAccount("666", 1001));
 
     }
 }

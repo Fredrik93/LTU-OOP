@@ -3,13 +3,9 @@ package freull0;
 import java.math.BigDecimal;
 
 /**
- * Syfte: Inlämningsuppgift 2
+ * Syfte: Sparkonto för en kund Inlämningsuppgift 2
  *
  * @author Fredrik Ullman, freull-0
- *
- *
- *                               todo:  Klassen SavingsAccount ska, förutom det som ingick i första inlämningsuppgiften, innehålla en begränsning på
- *                                 ett fritt uttag per år.
  */
 public class SavingsAccount extends Account
 {

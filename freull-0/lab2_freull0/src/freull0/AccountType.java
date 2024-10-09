@@ -3,16 +3,17 @@ package freull0;
 public enum AccountType
 
 {
-    SPARKONTO("Sparkonto");
-    private String sparKonto;
+    SPARKONTO("Sparkonto"), KREDITKONTO("Kreditkonto");
 
-    AccountType(String sparKonto)
+    private String kontoTyp;
+
+    AccountType(String kontoTyp)
     {
-        this.sparKonto = sparKonto;
+        this.kontoTyp = kontoTyp;
     }
 
     public String getName()
     {
-        return sparKonto;
+        return kontoTyp;
     }
 }

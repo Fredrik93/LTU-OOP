@@ -53,13 +53,18 @@ abstract class Account
     }
 
     abstract void withdrawAmount(BigDecimal amount);
-    /*{
-        this.amount = this.amount.subtract(amount);
-    }*/
 
     public int getAccountNumber()
     {
         return accountNumber;
+    }
+
+    /**
+     * Hämta kontotyp
+     */
+    public AccountType getAccountType()
+    {
+        return accountType;
     }
 
     /**
