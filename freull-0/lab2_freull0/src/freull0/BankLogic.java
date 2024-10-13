@@ -93,8 +93,8 @@ public class BankLogic
             else if(account.getAccountType().equals(AccountType.KREDITKONTO))
             {
                 {
-                    account.withdrawAmount(BigDecimal.valueOf(amount));
-                    return true;
+                   return account.withdrawAmount(BigDecimal.valueOf(amount));
+                   
                 }
             }
         }
@@ -415,12 +415,12 @@ public class BankLogic
 
         BigDecimal amount = BigDecimal.ZERO;
         BigDecimal interestRate = new BigDecimal("1.1");
-        CreditAccount creditAccount = new CreditAccount(amount, interestRate, AccountType.KREDITKONTO);
         if(customer != null)
         {
+            CreditAccount creditAccount = new CreditAccount(amount, interestRate, AccountType.KREDITKONTO);
             customer.addAccountToCustomer(creditAccount);
-            return 1;
+            return creditAccount.getAccountNumber();
         }
-        return 0;
+        return -1;
     }
 }

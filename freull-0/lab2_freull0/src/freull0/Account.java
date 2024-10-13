@@ -52,7 +52,7 @@ abstract class Account
         this.amount = this.amount.add(amount);
     }
 
-    abstract void withdrawAmount(BigDecimal amount);
+    abstract boolean withdrawAmount(BigDecimal amount);
 
     public int getAccountNumber()
     {
@@ -124,7 +124,7 @@ abstract class Account
     }
 
     /** Används för att lägga till rätt symboler e.g., komma-separerade värden */
-    private DecimalFormatSymbols setSymbols()
+    public DecimalFormatSymbols setSymbols()
     {
         DecimalFormatSymbols symbols = new DecimalFormatSymbols(Locale.GERMANY);
         symbols.setGroupingSeparator(' ');

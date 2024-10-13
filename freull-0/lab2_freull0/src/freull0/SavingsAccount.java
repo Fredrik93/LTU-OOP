@@ -19,13 +19,18 @@ public class SavingsAccount extends Account
     }
 
     @Override
-    void withdrawAmount(BigDecimal amount)
+    boolean withdrawAmount(BigDecimal amountToWithdraw)
     {
+             
+             if(amountToWithdraw.compareTo(amount) == 1 ){
+                return false;
+             }
         // Kolla om man nått gränsen för årliga gratisuttag
         if(withDrawalsCounter < MAX_AMOUNT_OF_FREE_WITHDRAWALS)
         {
-            super.amount = getAmount().subtract(amount);
+            super.amount = getAmount().subtract(amountToWithdraw);
             withDrawalsCounter++;
+            return true;
         }
         //Om man nått gränsen:
         else
@@ -33,10 +38,11 @@ public class SavingsAccount extends Account
             //Uttag efter det första fria uttaget beläggs med en uttagsränta på 2% av uttaget belopp
             // Tar man ut 500 kr så dras 510 kr från kontot (eftersom 2% av 500 är 0,02*500).
             BigDecimal twoPercent = new BigDecimal("0.02");
-            BigDecimal withdrawalFee = amount.multiply(twoPercent);
-            BigDecimal withdrawedAmountWithFee = amount.add(withdrawalFee);
+            BigDecimal withdrawalFee = amountToWithdraw.multiply(twoPercent);
+            BigDecimal withdrawedAmountWithFee = amountToWithdraw.add(withdrawalFee);
 
             super.amount = getAmount().subtract(withdrawedAmountWithFee);
+            return true;
         }
 
     }
