@@ -1,8 +1,13 @@
 package freull0;
 
+import java.awt.image.AreaAveragingScaleFilter;
 import java.math.BigDecimal;
+import java.security.cert.PolicyNode;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Inlämningsuppgift1 Syfte: Innehåller logik för att hantera kunder och dess konton.
@@ -28,6 +33,10 @@ public class BankLogic
     public boolean deposit(String pNo, int accountNumber, int amount)
     {
         Customer customer = findCustomer(pNo);
+        Account account = findAccount(customer, accountNumber);
+
+
+
 
         for(int i = 0; i < customer.getAccounts().size(); i++)
         {
@@ -35,6 +44,10 @@ public class BankLogic
             {
                 if(amount > 0)
                 {
+                    //add transaction
+                    customer.getAccounts().get(i).addTransaction(LocalDateTime.now(), amount,
+                            customer.getAccounts().get(i).getAmount(), accountNumber);
+                    //deposit transaction
                     customer.getAccounts().get(i).depositAmount(BigDecimal.valueOf(amount));
                     return true;
                 }
@@ -71,20 +84,23 @@ public class BankLogic
      *         kontonummer
      * @param amount
      *         saldo
-     * @param accountType
-     *         kontotyp
      * @return flagga som indikerar om insättningen är godkänd
      */
     public boolean withdraw(String pNo, int accountNumber, int amount)
     {
         Customer customer = findCustomer(pNo);
         Account account = findAccount(customer, accountNumber);
+        int negatedAmount = amount * -1;
         if(account != null)
         {
             if(account.getAccountType().equals(AccountType.SPARKONTO))
             {
                 if(account.getAmount().intValue() >= amount && amount > 0)
                 {
+                    //Lägg till transaktion
+                    account.addTransaction(LocalDateTime.now(), negatedAmount, account.amount,
+                            accountNumber);
+                    // Uttag
                     account.withdrawAmount(BigDecimal.valueOf(amount));
                     return true;
                 }
@@ -93,8 +109,19 @@ public class BankLogic
             else if(account.getAccountType().equals(AccountType.KREDITKONTO))
             {
                 {
-                   return account.withdrawAmount(BigDecimal.valueOf(amount));
-                   
+                    BigDecimal withdrawAmountPlusCurrentAmount = account.amount.add(BigDecimal.valueOf(negatedAmount));
+                    if(withdrawAmountPlusCurrentAmount.compareTo( new BigDecimal("-5000")) < 0)
+                    {
+                        //om summan man vill ta ut överstiger kreditgränsen på -5000
+                       // System.out.println("Withdraw is over the creditlimit" + withdrawAmountPlusCurrentAmount);
+                        return false;
+                    }
+                    //Lägg till transaktion
+                    account.addTransaction(LocalDateTime.now(), negatedAmount, account.amount,
+                            accountNumber);
+                    // uttag
+                    return account.withdrawAmount(BigDecimal.valueOf(amount));
+
                 }
             }
         }
@@ -102,6 +129,7 @@ public class BankLogic
     }
 
     /**
+     * TA BORT?
      * Används för att ta pengar på ett konto
      *
      * @param pNo
@@ -111,21 +139,23 @@ public class BankLogic
      * @param amount
      *         saldo
      * @return flagga som indikerar om insättningen är godkänd
-     */
+
     public boolean withdrawFromCreditAccount(String pNo, int accountNumber, int amount)
     {
-        Customer customer = findCustomer(pNo);
-        Account account = findAccount(customer, accountNumber);
-        if(account != null)
-        {
-            if(account.getAmount().intValue() >= amount && amount > 0)
-            {
-                account.withdrawAmount(BigDecimal.valueOf(amount));
-                return true;
-            }
-        }
-        return false;
+    Customer customer = findCustomer(pNo);
+    Account account = findAccount(customer, accountNumber);
+    if(account != null)
+    {
+    if(account.getAmount().intValue() >= amount && amount > 0)
+    {
+    account.addTransaction(LocalDateTime.now(), amount,
+    account.amount.toString(), accountNumber);
+    account.withdrawAmount(BigDecimal.valueOf(amount));
+    return true;
     }
+    }
+    return false;
+    }  */
 
     /**
      * Hittar en kunds specifika konto
@@ -406,6 +436,34 @@ public class BankLogic
 
     public List<String> getTransactions(String pNo, int accountId)
     {
+        Customer customer = findCustomer(pNo);
+        Account account = findAccount(customer, accountId);
+        //Kolla om konto finns
+        if(account == null){return null;}
+        // kolla om kunden finns
+        if(customer != null)
+        {
+            if(!customer.getpNo().equals(pNo))
+            {
+                System.out.println("Incorrect pNo: " + pNo + " for customer " + customer.getpNo());
+                return null;
+            }
+
+
+        List<String> transactionsPerAccount = new ArrayList<>();
+        if(account != null)
+        {
+            for(Transaction transaction : account.getTransactions())
+            {
+                if(transaction.accountId() == accountId)
+                {
+                    transactionsPerAccount.add(transaction.toString());
+                }
+            }
+        }
+        return transactionsPerAccount;
+    }
+        //Customer doesnt exist
         return null;
     }
 

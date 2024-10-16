@@ -1,9 +1,15 @@
 package freull0;
 
+import javax.swing.plaf.IconUIResource;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Inlämningsuppgift1 Syfte:
@@ -14,11 +20,15 @@ import java.util.Locale;
 
 abstract class Account
 {
+    private static final Logger LOG = Logger.getLogger(Account.class.getName());
+
     protected BigDecimal amount;
     private final BigDecimal interestRate;
     private final int accountNumber;
     private static int lastAccountNumber = 1000;
     private final AccountType accountType;
+
+    private final List<Transaction> transactions = new ArrayList<>();
 
     /**
      * Konstruktorn. Används för att skapa ny instans av objektet
@@ -65,6 +75,16 @@ abstract class Account
     public AccountType getAccountType()
     {
         return accountType;
+    }
+
+    public List<Transaction> getTransactions()
+    {
+        return transactions;
+    }
+    public void addTransaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount, int accountNumber ){
+        BigDecimal currentAmountAdded = getAmount().add(BigDecimal.valueOf(transactionAmount));
+        Transaction t = new Transaction(date, transactionAmount, currentAmountAdded, accountNumber);
+        transactions.add(t);
     }
 
     /**

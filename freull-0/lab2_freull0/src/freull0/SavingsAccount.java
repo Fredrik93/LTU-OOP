@@ -1,6 +1,7 @@
 package freull0;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * Syfte: Sparkonto för en kund Inlämningsuppgift 2

@@ -3,7 +3,13 @@ package freull0;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
+import java.util.List;
 
+/**
+ * Inlämningsuppgift2 Syfte: innehåller logiken för Kreditkonto
+ *
+ * @author Fredrik Ullman, freull-0
+ */
 public class CreditAccount extends Account
 {
     // Kreditgräns
@@ -91,6 +97,12 @@ public class CreditAccount extends Account
         }
     }
 
+    @Override
+    public BigDecimal getAmount()
+    {
+        return super.getAmount();
+    }
+
     /**
      * Formatterar kontoinformationen.
      */
@@ -100,12 +112,17 @@ public class CreditAccount extends Account
         // Lägg till önskade mönster för fälten
         DecimalFormat decimalFormatAmount = new DecimalFormat("###,##0.00", setSymbols());
         DecimalFormat decimalFormatInterestRate = new DecimalFormat("0.0", setSymbols());
+        DecimalFormat decimalFormatPenaltyRate = new DecimalFormat("0", setSymbols());
 
         // Formattera summan
         String formattedAmount = decimalFormatAmount.format(this.amount);
 
         // Formattera räntesatsen
         String formattedInterestRate = decimalFormatInterestRate.format(this.interestRate);
+        //Om summan är negativ visa skuldränta istället för vanlig ränta
+        if(this.amount.compareTo(BigDecimal.ZERO) < 0){
+            formattedInterestRate = decimalFormatPenaltyRate.format(this.penaltyFeeRate);
+        }
 
         return getAccountNumber() + " " + formattedAmount + " kr " + getAccountType().getName() + " "
                 + formattedInterestRate + " %";
