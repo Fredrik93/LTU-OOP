@@ -33,7 +33,7 @@ public class TestBank2
     //-----------------------------------------------------------------------------------
     public void test() throws FileNotFoundException, InterruptedException
     {
-        Locale.setDefault(Locale.of("swedish"));
+        Locale.setDefault(new Locale("sv"));
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         String customerName;
