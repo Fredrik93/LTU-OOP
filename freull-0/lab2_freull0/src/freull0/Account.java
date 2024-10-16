@@ -1,6 +1,5 @@
 package freull0;
 
-import javax.swing.plaf.IconUIResource;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -8,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -81,9 +79,19 @@ abstract class Account
     {
         return transactions;
     }
-    public void addTransaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount, int accountNumber ){
-        BigDecimal currentAmountAdded = getAmount().add(BigDecimal.valueOf(transactionAmount));
-        Transaction t = new Transaction(date, transactionAmount, currentAmountAdded, accountNumber);
+
+    public void addTransaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount, int accountNumber)
+    {
+        if(accountType.equals(AccountType.KREDITKONTO))
+        {
+            currentAmount = getAmount().add(BigDecimal.valueOf(transactionAmount));
+        }
+        // Sätter man in t.ex 500 men saldot är 0 så kommer det bli fel i transaktionen, så byt ut currentAmount ( saldo) till uttagsbeloppet
+        if(currentAmount.compareTo(BigDecimal.ZERO) == 0)
+        {
+            currentAmount = BigDecimal.valueOf(transactionAmount);
+        }
+        Transaction t = new Transaction(date, transactionAmount, currentAmount, accountNumber);
         transactions.add(t);
     }
 
@@ -103,7 +111,7 @@ abstract class Account
         String formattedAmount = decimalFormatAmount.format(this.amount);
 
         // Räkna ut räntesatsen
-        BigDecimal calculcatedInterestRateReturn = calculateInterestRate(interestRate, amount);
+        BigDecimal calculcatedInterestRateReturn = calculateInterestRate(interestRate, amount, accountType);
 
         // Formattera räntesatsen
         String formattedInterestRate = decimalFormatInterestRate.format(calculcatedInterestRateReturn);
@@ -118,8 +126,14 @@ abstract class Account
      *         saldo
      * @return räntan i kronor
      */
-    private BigDecimal calculateInterestRate(BigDecimal interestRate, BigDecimal amount)
+    private BigDecimal calculateInterestRate(BigDecimal interestRate, BigDecimal amount, AccountType accountType)
     {
+        // är summan under 0 så applicera skuldräntan på 5%
+        if(amount.compareTo(BigDecimal.ZERO) < 0)
+        {
+            BigDecimal penaltyRate = new BigDecimal("5.00");
+            return penaltyRate.divide(new BigDecimal(100)).multiply(amount);
+        }
         BigDecimal rate = interestRate.divide(new BigDecimal(100));
         return rate.multiply(amount);
     }

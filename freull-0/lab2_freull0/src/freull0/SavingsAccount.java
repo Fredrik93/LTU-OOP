@@ -1,7 +1,6 @@
 package freull0;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 /**
  * Syfte: Sparkonto för en kund Inlämningsuppgift 2
@@ -22,14 +21,12 @@ public class SavingsAccount extends Account
     @Override
     boolean withdrawAmount(BigDecimal amountToWithdraw)
     {
-             
-             if(amountToWithdraw.compareTo(amount) == 1 ){
-                return false;
-             }
-        // Kolla om man nått gränsen för årliga gratisuttag
+
+        // Kolla om man nått gränsen för årliga gratisuttag. då vi gör en koll (rad 96 Banklogic) så inkrementeras withdrawalsCounter en gång för mycket,
+        //därför behöver vi kolla <= istället för enbart <
         if(withDrawalsCounter < MAX_AMOUNT_OF_FREE_WITHDRAWALS)
         {
-            super.amount = getAmount().subtract(amountToWithdraw);
+            amount = getAmount().subtract(amountToWithdraw);
             withDrawalsCounter++;
             return true;
         }
@@ -41,7 +38,11 @@ public class SavingsAccount extends Account
             BigDecimal twoPercent = new BigDecimal("0.02");
             BigDecimal withdrawalFee = amountToWithdraw.multiply(twoPercent);
             BigDecimal withdrawedAmountWithFee = amountToWithdraw.add(withdrawalFee);
-
+            if(withdrawedAmountWithFee.compareTo(getAmount()) > 0)
+            {
+                System.out.println("Beloppet är för högt");
+                return false;
+            }
             super.amount = getAmount().subtract(withdrawedAmountWithFee);
             return true;
         }
