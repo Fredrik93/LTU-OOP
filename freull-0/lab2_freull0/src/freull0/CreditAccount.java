@@ -3,7 +3,7 @@ package freull0;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
-import java.util.List;
+import java.time.LocalDateTime;
 
 /**
  * Inlämningsuppgift2 Syfte: innehåller logiken för Kreditkonto
@@ -35,9 +35,8 @@ public class CreditAccount extends Account
      */
 
     /**
-     * När kreditkontot skapas så är saldot 0 kr, kreditgränsen är satt till
-     * 5000 kr. M an kan göra uttag så länge saldot inte passerar kreditgränsen,
-     * saldot ska kunna bli lägst -5000 kr då kreditgränsen är 5000 kr.
+     * När kreditkontot skapas så är saldot 0 kr, kreditgränsen är satt till 5000 kr. M an kan göra uttag så länge
+     * saldot inte passerar kreditgränsen, saldot ska kunna bli lägst -5000 kr då kreditgränsen är 5000 kr.
      */
     public CreditAccount(BigDecimal amount, BigDecimal interestRate, AccountType accountType)
     {
@@ -58,11 +57,12 @@ public class CreditAccount extends Account
         if((amountToWithdraw.compareTo(amount)) > 0)
         {
             BigDecimal creditAmount = amount.add(creditLimit);
-           // System.out.println("uttagsbelopp:" + amountToWithdraw + " saldo + kredit: " + creditAmount);
+            // System.out.println("uttagsbelopp:" + amountToWithdraw + " saldo + kredit: " + creditAmount);
 
             // om uttagsbeloppet är högre än kredit + saldo
-            if(amountToWithdraw.compareTo(creditAmount) == 1 ){
-               return false;
+            if(amountToWithdraw.compareTo(creditAmount) == 1)
+            {
+                return false;
             }
             // behåll resten av uttagsbeloppet
             amountToBeWithdrawnFromCreditAmount = amountToWithdraw.subtract(amount);
@@ -77,12 +77,29 @@ public class CreditAccount extends Account
         }
         else
         {
-         //   System.out.println("uttagsbelopp:" + amountToWithdraw + " saldo: " + amount);
-      
+            //   System.out.println("uttagsbelopp:" + amountToWithdraw + " saldo: " + amount);
+
             amount = amount.subtract(amountToWithdraw);
             return true;
         }
 
+    }
+
+    @Override
+    void addTransaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount, int accountNumber)
+    {
+        if(getAccountType().equals(AccountType.KREDITKONTO))
+        {
+            currentAmount = getAmount().add(BigDecimal.valueOf(transactionAmount));
+        }
+        // Sätter man in t.ex 500 men saldot är 0 så kommer det bli fel i transaktionen, så byt ut currentAmount ( saldo) till uttagsbeloppet
+        if(currentAmount.compareTo(BigDecimal.ZERO) == 0)
+        {
+            currentAmount = BigDecimal.valueOf(transactionAmount);
+        }
+        //här behöver jag tänka på räntan som är 2% vid andra uttaget, det är den summan jag vill ha. alltså 102, inte 100.
+        Transaction t = new Transaction(date, transactionAmount, currentAmount, accountNumber);
+        getTransactions().add(t);
     }
 
     public void closeAccount()
@@ -120,11 +137,11 @@ public class CreditAccount extends Account
         // Formattera räntesatsen
         String formattedInterestRate = decimalFormatInterestRate.format(this.interestRate);
         //Om summan är negativ visa skuldränta istället för vanlig ränta
-        if(this.amount.compareTo(BigDecimal.ZERO) < 0){
+        if(this.amount.compareTo(BigDecimal.ZERO) < 0)
+        {
             formattedInterestRate = decimalFormatPenaltyRate.format(this.penaltyFeeRate);
         }
 
-        return getAccountNumber() + " " + formattedAmount + " kr " + getAccountType().getName() + " "
-                + formattedInterestRate + " %";
+        return getAccountNumber() + " " + formattedAmount + " kr " + getAccountType().getName() + " " + formattedInterestRate + " %";
     }
 }

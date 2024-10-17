@@ -21,8 +21,9 @@ public class MyTestBank
         //Customer Lis
         bank.createCustomer("Lis", "fis", "1");
         bank.createSavingsAccount("1");
-        bank.deposit("1", 1001, 500);
-   
+        bank.deposit("1", 1001, 1000);
+        bank.withdraw("1", 1001, -100);
+
         System.out.println(bank.getCustomer("1"));
         System.out.println(bank.getTransactions("1", 1001));
     }

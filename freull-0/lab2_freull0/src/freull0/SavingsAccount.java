@@ -1,6 +1,7 @@
 package freull0;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * Syfte: Sparkonto för en kund Inlämningsuppgift 2
@@ -44,8 +45,29 @@ public class SavingsAccount extends Account
                 return false;
             }
             super.amount = getAmount().subtract(withdrawedAmountWithFee);
+            withDrawalsCounter++;
             return true;
         }
-
     }
+
+    @Override
+    void addTransaction(LocalDateTime date, int transactionAmnt, BigDecimal currentAmount, int accountNumber)
+    {
+        BigDecimal transactionAmount = BigDecimal.valueOf(transactionAmnt);
+        // Sätter man in t.ex 500 men saldot är 0 så kommer det bli fel i transaktionen, så byt ut currentAmount ( saldo) till uttagsbeloppet
+        if(currentAmount.compareTo(BigDecimal.ZERO) == 0)
+        {
+            currentAmount = transactionAmount;
+        }
+        //här behöver jag tänka på räntan som är 2% vid andra uttaget, det är den summan jag vill ha. alltså 102, inte 100.
+        if(withDrawalsCounter > 1)
+        {
+            BigDecimal interestRate = new BigDecimal("0.02");
+            BigDecimal interestAmountTotal = transactionAmount.multiply(interestRate);
+            transactionAmount = transactionAmount.add(interestAmountTotal);
+        }
+        Transaction t = new Transaction(date, transactionAmount.intValue(), currentAmount, accountNumber);
+        getTransactions().add(t);
+    }
+
 }

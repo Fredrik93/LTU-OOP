@@ -80,20 +80,8 @@ abstract class Account
         return transactions;
     }
 
-    public void addTransaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount, int accountNumber)
-    {
-        if(accountType.equals(AccountType.KREDITKONTO))
-        {
-            currentAmount = getAmount().add(BigDecimal.valueOf(transactionAmount));
-        }
-        // Sätter man in t.ex 500 men saldot är 0 så kommer det bli fel i transaktionen, så byt ut currentAmount ( saldo) till uttagsbeloppet
-        if(currentAmount.compareTo(BigDecimal.ZERO) == 0)
-        {
-            currentAmount = BigDecimal.valueOf(transactionAmount);
-        }
-        Transaction t = new Transaction(date, transactionAmount, currentAmount, accountNumber);
-        transactions.add(t);
-    }
+    abstract void addTransaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount,
+            int accountNumber);
 
     /**
      * hjälpmetod för att visa en formatterad sträng vid stängning av konto
@@ -126,7 +114,7 @@ abstract class Account
      *         saldo
      * @return räntan i kronor
      */
-    private BigDecimal calculateInterestRate(BigDecimal interestRate, BigDecimal amount, AccountType accountType)
+    public BigDecimal calculateInterestRate(BigDecimal interestRate, BigDecimal amount, AccountType accountType)
     {
         // är summan under 0 så applicera skuldräntan på 5%
         if(amount.compareTo(BigDecimal.ZERO) < 0)

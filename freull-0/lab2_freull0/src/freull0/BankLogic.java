@@ -85,6 +85,12 @@ public class BankLogic
         Customer customer = findCustomer(pNo);
         Account account = findAccount(customer, accountNumber);
         int negatedAmount = amount * -1;
+
+        //Kolla så beloppet är mer än 0
+        if(amount < 0)
+        {
+            return false;
+        }
         if(account != null)
         {
             if(account.getAccountType().equals(AccountType.SPARKONTO))
