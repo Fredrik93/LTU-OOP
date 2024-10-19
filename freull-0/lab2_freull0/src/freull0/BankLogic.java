@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Inlämningsuppgift1 Syfte: Innehåller logik för att hantera kunder och dess konton.
+ * Inlämningsuppgift2 Syfte: Innehåller logik för att hantera kunder och dess konton.
  *
- * @author Fredrik Ullman, freull-0
+ * @author Fredrik Ullman, freull-0 Jag brukar förorda att inte returnera en instansvariabel-lista från en klass, vill
+ *         man returnera en lista använd gärna List.copyOf() som ger oss en unmodifiable list. Detta för att minska
+ *         risken att den som hämtar listan ändrar i den.
  */
 
 public class BankLogic
@@ -84,84 +86,12 @@ public class BankLogic
     {
         Customer customer = findCustomer(pNo);
         Account account = findAccount(customer, accountNumber);
-        int negatedAmount = amount * -1;
-
-        //Kolla så beloppet är mer än 0
-        if(amount < 0)
-        {
-            return false;
-        }
         if(account != null)
         {
-            if(account.getAccountType().equals(AccountType.SPARKONTO))
-            {
-                if(account.getAmount().intValue() >= amount && amount > 0)
-                {
-
-                    // Uttag, om withdraw returnerar sant
-                    if(account.getAmount().compareTo(new BigDecimal(amount)) >= 0)
-                    {
-                        //är beloppet högre än saldot så returnera false
-                        if(!account.withdrawAmount(BigDecimal.valueOf(amount)))
-                        {
-                            return false;
-                        }
-                        //Lägg till transaktion
-                        account.addTransaction(LocalDateTime.now(), negatedAmount, account.getAmount(), accountNumber);
-                        return true;
-                    }
-                }
-            }
-            //Else-if för läsbarhet. hade räckt med if och sedan else.
-            else if(account.getAccountType().equals(AccountType.KREDITKONTO))
-            {
-                {
-                    BigDecimal withdrawAmountPlusCurrentAmount = account.amount.add(BigDecimal.valueOf(negatedAmount));
-                    if(withdrawAmountPlusCurrentAmount.compareTo(new BigDecimal("-5000")) < 0)
-                    {
-                        //om summan man vill ta ut överstiger kreditgränsen på -5000
-                        // System.out.println("Withdraw is over the creditlimit" + withdrawAmountPlusCurrentAmount);
-                        return false;
-                    }
-                    //Lägg till transaktion
-                    account.addTransaction(LocalDateTime.now(), negatedAmount, account.amount, accountNumber);
-                    // uttag
-                    return account.withdrawAmount(BigDecimal.valueOf(amount));
-
-                }
-            }
+            return account.withdraw(accountNumber, amount, account);
         }
         return false;
     }
-
-    /**
-     * TA BORT?
-     * Används för att ta pengar på ett konto
-     *
-     * @param pNo
-     *         personnummret
-     * @param accountNumber
-     *         kontonummer
-     * @param amount
-     *         saldo
-     * @return flagga som indikerar om insättningen är godkänd
-
-    public boolean withdrawFromCreditAccount(String pNo, int accountNumber, int amount)
-    {
-    Customer customer = findCustomer(pNo);
-    Account account = findAccount(customer, accountNumber);
-    if(account != null)
-    {
-    if(account.getAmount().intValue() >= amount && amount > 0)
-    {
-    account.addTransaction(LocalDateTime.now(), amount,
-    account.amount.toString(), accountNumber);
-    account.withdrawAmount(BigDecimal.valueOf(amount));
-    return true;
-    }
-    }
-    return false;
-    }  */
 
     /**
      * Hittar en kunds specifika konto
@@ -346,8 +276,7 @@ public class BankLogic
         {
             if(c.getpNo().equals(pNo))
             {
-                Account newAccount = new SavingsAccount(new BigDecimal(0), new BigDecimal("2.4"),
-                        AccountType.SPARKONTO);
+                Account newAccount = new SavingsAccount(new BigDecimal(0), new BigDecimal("2.4"));
                 c.addAccountToCustomer(newAccount);
                 return newAccount.getAccountNumber();
             }
@@ -483,7 +412,7 @@ public class BankLogic
         BigDecimal interestRate = new BigDecimal("1.1");
         if(customer != null)
         {
-            CreditAccount creditAccount = new CreditAccount(amount, interestRate, AccountType.KREDITKONTO);
+            CreditAccount creditAccount = new CreditAccount(amount, interestRate);
             customer.addAccountToCustomer(creditAccount);
             return creditAccount.getAccountNumber();
         }

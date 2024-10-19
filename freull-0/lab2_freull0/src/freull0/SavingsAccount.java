@@ -14,9 +14,61 @@ public class SavingsAccount extends Account
     private static final int MAX_AMOUNT_OF_FREE_WITHDRAWALS = 1;
     private int withDrawalsCounter = 0;
 
-    public SavingsAccount(BigDecimal amount, BigDecimal interestRate, AccountType accountType)
+    public SavingsAccount(BigDecimal amount, BigDecimal interestRate)
     {
-        super(amount, interestRate, accountType);
+        super(amount, interestRate, AccountType.SPARKONTO);
+    }
+
+    public boolean withdraw(int accountNumber, int amount, Account account)
+    {
+        int negatedAmount = amount * -1;
+
+        //Kolla så beloppet är mer än 0
+        if(amount < 0)
+        {
+            return false;
+        }
+        if(account != null)
+        {
+            if(account.getAccountType().equals(AccountType.SPARKONTO))
+            {
+                if(account.getAmount().intValue() >= amount && amount > 0)
+                {
+
+                    // Uttag, om withdraw returnerar sant
+                    if(account.getAmount().compareTo(new BigDecimal(amount)) >= 0)
+                    {
+                        //är beloppet högre än saldot så returnera false
+                        if(!account.withdrawAmount(BigDecimal.valueOf(amount)))
+                        {
+                            return false;
+                        }
+                        //Lägg till transaktion
+                        account.addTransaction(LocalDateTime.now(), negatedAmount, account.getAmount(), accountNumber);
+                        return true;
+                    }
+                }
+            }
+            //Else-if för läsbarhet. hade räckt med if och sedan else.
+            else if(account.getAccountType().equals(AccountType.KREDITKONTO))
+            {
+                {
+                    BigDecimal withdrawAmountPlusCurrentAmount = account.amount.add(BigDecimal.valueOf(negatedAmount));
+                    if(withdrawAmountPlusCurrentAmount.compareTo(new BigDecimal("-5000")) < 0)
+                    {
+                        //om summan man vill ta ut överstiger kreditgränsen på -5000
+                        // System.out.println("Withdraw is over the creditlimit" + withdrawAmountPlusCurrentAmount);
+                        return false;
+                    }
+                    //Lägg till transaktion
+                    account.addTransaction(LocalDateTime.now(), negatedAmount, account.amount, accountNumber);
+                    // uttag
+                    return account.withdrawAmount(BigDecimal.valueOf(amount));
+
+                }
+            }
+        }
+        return false;
     }
 
     @Override
@@ -39,9 +91,9 @@ public class SavingsAccount extends Account
             BigDecimal twoPercent = new BigDecimal("0.02");
             BigDecimal withdrawalFee = amountToWithdraw.multiply(twoPercent);
             BigDecimal withdrawedAmountWithFee = amountToWithdraw.add(withdrawalFee);
+            // Beloppet är för högt
             if(withdrawedAmountWithFee.compareTo(getAmount()) > 0)
             {
-                System.out.println("Beloppet är för högt");
                 return false;
             }
             super.amount = getAmount().subtract(withdrawedAmountWithFee);
