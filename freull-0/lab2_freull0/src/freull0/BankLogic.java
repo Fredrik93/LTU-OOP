@@ -41,7 +41,7 @@ public class BankLogic
                 {
                     //add transaction
                     customer.getAccounts().get(i)
-                            .addTransaction(LocalDateTime.now(), amount, customer.getAccounts().get(i).getAmount(),
+                            .createTransaction(LocalDateTime.now(), amount, customer.getAccounts().get(i).getAmount(),
                                     accountNumber);
                     //deposit transaction
                     customer.getAccounts().get(i).depositAmount(BigDecimal.valueOf(amount));
@@ -388,14 +388,11 @@ public class BankLogic
             }
 
             List<String> transactionsPerAccount = new ArrayList<>();
-            if(account != null)
+            for(Transaction transaction : account.getTransactions())
             {
-                for(Transaction transaction : account.getTransactions())
+                if(transaction.accountId() == accountId)
                 {
-                    if(transaction.accountId() == accountId)
-                    {
-                        transactionsPerAccount.add(transaction.toString());
-                    }
+                    transactionsPerAccount.add(transaction.toString());
                 }
             }
             return transactionsPerAccount;

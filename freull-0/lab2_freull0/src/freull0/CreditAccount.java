@@ -63,7 +63,7 @@ public class CreditAccount extends Account
             return false;
         }
         //Lägg till transaktion
-        addTransaction(LocalDateTime.now(), negatedAmount, this.amount, accountNumber);
+        createTransaction(LocalDateTime.now(), negatedAmount, this.amount, accountNumber);
         // uttag
         return withdrawAmount(BigDecimal.valueOf(amount));
     }
@@ -109,7 +109,7 @@ public class CreditAccount extends Account
     }
 
     @Override
-    void addTransaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount, int accountNumber)
+    void createTransaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount, int accountNumber)
     {
         if(getAccountType().equals(AccountType.KREDITKONTO))
         {
@@ -122,7 +122,7 @@ public class CreditAccount extends Account
         }
         //här behöver jag tänka på räntan som är 2% vid andra uttaget, det är den summan jag vill ha. alltså 102, inte 100.
         Transaction t = new Transaction(date, transactionAmount, currentAmount, accountNumber);
-        getTransactions().add(t);
+        addTransactionToList(t);
     }
 
     public void closeAccount()
@@ -132,8 +132,7 @@ public class CreditAccount extends Account
         {
             BigDecimal penaltyFeeRateInPercent = penaltyFeeRate.divide(new BigDecimal("100"), 2, RoundingMode.HALF_UP);
             BigDecimal penaltyFee = getAmount().multiply(penaltyFeeRateInPercent);
-            BigDecimal amountWithSubtractedPenaltyFee = getAmount().subtract(penaltyFee);
-            super.amount = amountWithSubtractedPenaltyFee;
+            super.amount = getAmount().subtract(penaltyFee);
         }
     }
 

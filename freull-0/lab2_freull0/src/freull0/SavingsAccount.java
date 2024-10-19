@@ -41,7 +41,7 @@ public class SavingsAccount extends Account
                     return false;
                 }
                 //Lägg till transaktion
-                addTransaction(LocalDateTime.now(), negatedAmount, getAmount(), accountNumber);
+                createTransaction(LocalDateTime.now(), negatedAmount, getAmount(), accountNumber);
                 return true;
             }
         }
@@ -80,7 +80,7 @@ public class SavingsAccount extends Account
     }
 
     @Override
-    void addTransaction(LocalDateTime date, int transactionAmnt, BigDecimal currentAmount, int accountNumber)
+    void createTransaction(LocalDateTime date, int transactionAmnt, BigDecimal currentAmount, int accountNumber)
     {
         BigDecimal transactionAmount = BigDecimal.valueOf(transactionAmnt);
         // Sätter man in t.ex 500 men saldot är 0 så kommer det bli fel i transaktionen, så byt ut currentAmount ( saldo) till uttagsbeloppet
@@ -96,7 +96,7 @@ public class SavingsAccount extends Account
             transactionAmount = transactionAmount.add(interestAmountTotal);
         }
         Transaction t = new Transaction(date, transactionAmount.intValue(), currentAmount, accountNumber);
-        getTransactions().add(t);
+        addTransactionToList(t);
     }
 
 }

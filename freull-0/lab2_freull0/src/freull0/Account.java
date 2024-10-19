@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.logging.Logger;
 
 /**
  * Inlämningsuppgift1 Syfte:
@@ -18,8 +17,6 @@ import java.util.logging.Logger;
 
 abstract class Account
 {
-    private static final Logger LOG = Logger.getLogger(Account.class.getName());
-
     protected BigDecimal amount;
     private final BigDecimal interestRate;
     private final int accountNumber;
@@ -79,10 +76,33 @@ abstract class Account
 
     public List<Transaction> getTransactions()
     {
-        return transactions;
+        return List.copyOf(transactions);
     }
 
-    abstract void addTransaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount,
+    /**
+     * Lägg till transaktion i lista
+     *
+     * @param transaction
+     *         objektet som håller transaktionsinformation
+     */
+    public void addTransactionToList(Transaction transaction)
+    {
+        transactions.add(transaction);
+    }
+
+    /**
+     * Create a transaction
+     *
+     * @param date
+     *         datum
+     * @param transactionAmount
+     *         belopp på transaktionen
+     * @param currentAmount
+     *         saldo
+     * @param accountNumber
+     *         kontonummer
+     */
+    abstract void createTransaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount,
             int accountNumber);
 
     /**
