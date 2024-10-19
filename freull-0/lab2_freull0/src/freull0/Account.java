@@ -1,6 +1,7 @@
 package freull0;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
@@ -121,7 +122,7 @@ abstract class Account
         String formattedAmount = decimalFormatAmount.format(this.amount);
 
         // Räkna ut räntesatsen
-        BigDecimal calculcatedInterestRateReturn = calculateInterestRate(interestRate, amount, accountType);
+        BigDecimal calculcatedInterestRateReturn = calculateInterestRate(interestRate, amount);
 
         // Formattera räntesatsen
         String formattedInterestRate = decimalFormatInterestRate.format(calculcatedInterestRateReturn);
@@ -136,15 +137,17 @@ abstract class Account
      *         saldo
      * @return räntan i kronor
      */
-    public BigDecimal calculateInterestRate(BigDecimal interestRate, BigDecimal amount, AccountType accountType)
+    public BigDecimal calculateInterestRate(BigDecimal interestRate, BigDecimal amount)
     {
         // är summan under 0 så applicera skuldräntan på 5%
         if(amount.compareTo(BigDecimal.ZERO) < 0)
         {
             BigDecimal penaltyRate = new BigDecimal("5.00");
-            return penaltyRate.divide(new BigDecimal(100)).multiply(amount);
+            BigDecimal divisor = new BigDecimal("100");
+            return penaltyRate.divide(divisor, 5, RoundingMode.HALF_UP).multiply(amount);
+
         }
-        BigDecimal rate = interestRate.divide(new BigDecimal(100));
+        BigDecimal rate = interestRate.divide(new BigDecimal(100), 5, RoundingMode.HALF_UP);
         return rate.multiply(amount);
     }
 

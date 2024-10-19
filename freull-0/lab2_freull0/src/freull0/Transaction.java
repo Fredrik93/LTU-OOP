@@ -6,13 +6,11 @@ import java.text.DecimalFormatSymbols;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-/**
- * Inlämningsuppgift2 Syfte: innehåller fält för transaktioner
- *
- * @author Fredrik Ullman, freull-0
- */
 
 /**
+ * * Inlämningsuppgift2 Syfte: innehåller fält för transaktioner *
+ * * @author Fredrik Ullman, freull-0
+ *
  * @param date
  *         datum för transaktion
  * @param transactionAmount

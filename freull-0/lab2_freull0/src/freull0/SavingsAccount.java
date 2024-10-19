@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
  */
 public class SavingsAccount extends Account
 {
-    private static final int yearlyFreeWithdrawals = 1;
     private static final int MAX_AMOUNT_OF_FREE_WITHDRAWALS = 1;
     private int withDrawalsCounter = 0;
 

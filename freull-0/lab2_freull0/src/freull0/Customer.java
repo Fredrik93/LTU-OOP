@@ -37,32 +37,28 @@ public class Customer
     /**
      * @param newName
      *         det nya förnamnet
-     * @return uppdaterat förnamn
      */
-    public String changeFirstName(String newName)
+    public void changeFirstName(String newName)
     {
-        return this.firstName = newName;
+        this.firstName = newName;
     }
 
     /**
      * @param newLastName
      *         det nya förnamnet
-     * @return uppdaterat förnamn
      */
-    public String changeLastName(String newLastName)
+    public void changeLastName(String newLastName)
     {
-        return this.lastName = newLastName;
+        this.lastName = newLastName;
     }
 
     /**
      * @param account
      *         nytt konton
-     * @return info om det nya kontot
      */
-    public int addAccountToCustomer(Account account)
+    public void addAccountToCustomer(Account account)
     {
         accounts.add(account);
-        return account.getAccountNumber();
     }
 
     public String getFirstName()

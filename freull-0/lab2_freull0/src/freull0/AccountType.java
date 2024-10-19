@@ -5,7 +5,7 @@ public enum AccountType
 {
     SPARKONTO("Sparkonto"), KREDITKONTO("Kreditkonto");
 
-    private String kontoTyp;
+    private final String kontoTyp;
 
     AccountType(String kontoTyp)
     {

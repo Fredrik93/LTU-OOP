@@ -32,22 +32,17 @@ public class BankLogic
     {
         Customer customer = findCustomer(pNo);
         Account account = findAccount(customer, accountNumber);
-
-        for(int i = 0; i < customer.getAccounts().size(); i++)
+        if(account == null)
         {
-            if(customer.getAccounts().get(i).getAccountNumber() == accountNumber)
-            {
-                if(amount > 0)
-                {
-                    //add transaction
-                    customer.getAccounts().get(i)
-                            .createTransaction(LocalDateTime.now(), amount, customer.getAccounts().get(i).getAmount(),
-                                    accountNumber);
-                    //deposit transaction
-                    customer.getAccounts().get(i).depositAmount(BigDecimal.valueOf(amount));
-                    return true;
-                }
-            }
+            return false;
+        }
+        if(amount > 0)
+        {
+            //add transaction
+            account.createTransaction(LocalDateTime.now(), amount, account.getAmount(), accountNumber);
+            //deposit transaction
+            account.depositAmount(BigDecimal.valueOf(amount));
+            return true;
         }
         return false;
     }
@@ -137,7 +132,6 @@ public class BankLogic
     public List<String> getCustomer(String pNo)
     {
         List<String> customer = new ArrayList<>();
-        boolean customerExist;
         //iterera över lista med kunder
         Customer c = findCustomer(pNo);
         // Om kund inte finns så behövs denna check, annars får vi nullpointer exception.
@@ -378,27 +372,22 @@ public class BankLogic
         {
             return null;
         }
-        // kolla om kunden finns
-        if(customer != null)
+        if(!customer.getpNo().equals(pNo))
         {
-            if(!customer.getpNo().equals(pNo))
-            {
-                System.out.println("Incorrect pNo: " + pNo + " for customer " + customer.getpNo());
-                return null;
-            }
-
-            List<String> transactionsPerAccount = new ArrayList<>();
-            for(Transaction transaction : account.getTransactions())
-            {
-                if(transaction.accountId() == accountId)
-                {
-                    transactionsPerAccount.add(transaction.toString());
-                }
-            }
-            return transactionsPerAccount;
+            System.out.println("Incorrect pNo: " + pNo + " for customer " + customer.getpNo());
+            return null;
         }
+
+        List<String> transactionsPerAccount = new ArrayList<>();
+        for(Transaction transaction : account.getTransactions())
+        {
+            if(transaction.accountId() == accountId)
+            {
+                transactionsPerAccount.add(transaction.toString());
+            }
+        }
+        return transactionsPerAccount;
         //Customer doesnt exist
-        return null;
     }
 
     public int createCreditAccount(String pNO)
