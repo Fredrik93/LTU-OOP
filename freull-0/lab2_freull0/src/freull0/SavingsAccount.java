@@ -19,7 +19,7 @@ public class SavingsAccount extends Account
         super(amount, interestRate, AccountType.SPARKONTO);
     }
 
-    public boolean withdraw(int accountNumber, int amount, Account account)
+    public boolean withdraw(int accountNumber, int amount)
     {
         int negatedAmount = amount * -1;
 
@@ -28,44 +28,21 @@ public class SavingsAccount extends Account
         {
             return false;
         }
-        if(account != null)
+
+        if(getAmount().intValue() >= amount && amount > 0)
         {
-            if(account.getAccountType().equals(AccountType.SPARKONTO))
-            {
-                if(account.getAmount().intValue() >= amount && amount > 0)
-                {
 
-                    // Uttag, om withdraw returnerar sant
-                    if(account.getAmount().compareTo(new BigDecimal(amount)) >= 0)
-                    {
-                        //är beloppet högre än saldot så returnera false
-                        if(!account.withdrawAmount(BigDecimal.valueOf(amount)))
-                        {
-                            return false;
-                        }
-                        //Lägg till transaktion
-                        account.addTransaction(LocalDateTime.now(), negatedAmount, account.getAmount(), accountNumber);
-                        return true;
-                    }
-                }
-            }
-            //Else-if för läsbarhet. hade räckt med if och sedan else.
-            else if(account.getAccountType().equals(AccountType.KREDITKONTO))
+            // Uttag, om withdraw returnerar sant
+            if(getAmount().compareTo(new BigDecimal(amount)) >= 0)
             {
+                //är beloppet högre än saldot så returnera false
+                if(!withdrawAmount(BigDecimal.valueOf(amount)))
                 {
-                    BigDecimal withdrawAmountPlusCurrentAmount = account.amount.add(BigDecimal.valueOf(negatedAmount));
-                    if(withdrawAmountPlusCurrentAmount.compareTo(new BigDecimal("-5000")) < 0)
-                    {
-                        //om summan man vill ta ut överstiger kreditgränsen på -5000
-                        // System.out.println("Withdraw is over the creditlimit" + withdrawAmountPlusCurrentAmount);
-                        return false;
-                    }
-                    //Lägg till transaktion
-                    account.addTransaction(LocalDateTime.now(), negatedAmount, account.amount, accountNumber);
-                    // uttag
-                    return account.withdrawAmount(BigDecimal.valueOf(amount));
-
+                    return false;
                 }
+                //Lägg till transaktion
+                addTransaction(LocalDateTime.now(), negatedAmount, getAmount(), accountNumber);
+                return true;
             }
         }
         return false;

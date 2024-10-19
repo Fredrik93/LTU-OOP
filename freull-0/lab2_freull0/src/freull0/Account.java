@@ -50,7 +50,7 @@ abstract class Account
         this.accountType = accountType;
     }
 
-    abstract boolean withdraw(int accountNumber, int amount, Account account);
+    abstract boolean withdraw(int accountNumber, int amount);
 
     public BigDecimal getAmount()
     {

@@ -88,7 +88,7 @@ public class BankLogic
         Account account = findAccount(customer, accountNumber);
         if(account != null)
         {
-            return account.withdraw(accountNumber, amount, account);
+            return account.withdraw(accountNumber, amount);
         }
         return false;
     }
