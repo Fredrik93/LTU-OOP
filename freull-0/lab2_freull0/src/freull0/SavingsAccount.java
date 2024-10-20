@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 /**
- * Syfte: Sparkonto för en kund Inlämningsuppgift 2
+ * Inlämningsuppgift 2 Syfte: Sparkonto för en kund
  *
  * @author Fredrik Ullman, freull-0
  */

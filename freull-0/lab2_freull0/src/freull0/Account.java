@@ -10,8 +10,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Inlämningsuppgift1 Syfte:
- * * Definierar fält för ett konto
+ * Inlämningsuppgift2 Syfte: Definierar fält för ett konto
  *
  * @author Fredrik Ullman, freull-0
  */

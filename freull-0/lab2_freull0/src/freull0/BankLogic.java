@@ -8,9 +8,7 @@ import java.util.List;
 /**
  * Inlämningsuppgift2 Syfte: Innehåller logik för att hantera kunder och dess konton.
  *
- * @author Fredrik Ullman, freull-0 Jag brukar förorda att inte returnera en instansvariabel-lista från en klass, vill
- *         man returnera en lista använd gärna List.copyOf() som ger oss en unmodifiable list. Detta för att minska
- *         risken att den som hämtar listan ändrar i den.
+ * @author Fredrik Ullman, freull-0
  */
 
 public class BankLogic
@@ -112,7 +110,9 @@ public class BankLogic
         return null;
     }
 
-    /** Hämtar alla kunder */
+    /**
+     * Hämtar alla kunder
+     */
     public List<String> getAllCustomers()
     {
         List<String> customerList = new ArrayList<>();

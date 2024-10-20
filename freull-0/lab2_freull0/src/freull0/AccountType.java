@@ -1,5 +1,10 @@
 package freull0;
 
+/**
+ * Inlämningsuppgift2 Syfte: Innehåller konstanter för konton.
+ *
+ * @author Fredrik Ullman, freull-0
+ */
 public enum AccountType
 
 {

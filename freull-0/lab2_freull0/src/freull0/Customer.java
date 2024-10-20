@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Inlämningsuppgift 1 syfte: Definierar fält för en kund
+ * Inlämningsuppgift2 syfte: Definierar fält för en kund
  *
  * @author Fredrik Ullman, freull-0
  */
