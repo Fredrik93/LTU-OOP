@@ -54,7 +54,7 @@ public class BankLogic
      *         personnummer
      * @return kund-objektet
      */
-    private Customer findCustomer(String pNo)
+    public Customer findCustomer(String pNo)
     {
         for(Customer customer : customers)
         {
