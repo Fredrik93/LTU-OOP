@@ -1,6 +1,6 @@
 package test;
 
-import freull0.controller.BankLogic;
+import freull0.controller.BankController;
 
 import java.io.FileNotFoundException;
 import java.text.SimpleDateFormat;
@@ -27,7 +27,7 @@ import java.util.Locale;
 public class TestBank3
 {
 
-    private BankLogic bank = new BankLogic();
+    private BankController bank = new BankController();
     private int testCounter = 1;
 
     //-----------------------------------------------------------------------------------
