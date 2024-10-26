@@ -10,18 +10,35 @@ public class GUI extends JFrame
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
     private final JLabel textLabel = new JLabel();
+    private final JTextField textField = new JTextField(20);
+    private final JLabel textLabel2 = new JLabel();
 
     public GUI()
     {
         setSize(WIDTH, HEIGHT);
-        createComponents();
+        createTextInputFieldComponent();
     }
 
-    private void createComponents()
+    private void createTextInputFieldComponent()
+    {
+        ActionListener listener = new TextListener(textField, textLabel);
+        textField.addActionListener(listener);
+        JPanel panel = new JPanel();
+        JLabel label = new JLabel("Enter firstname ");
+        panel.add(label);
+        panel.add(textField);
+        panel.add(textLabel);
+
+        add(panel);
+
+    }
+
+    private void createButtonComponents()
     {
         JButton redButton = new JButton("Röd");
         JButton blueButton = new JButton("blå");
         JButton greenButton = new JButton("grön");
+        JTextField createCustomerField = new JTextField();
         //I exemplet så skapade vi en inre klass för att kunna använda privata metoder,
         // jag lade koden i en egen klass ClickListener istället
         ActionListener listener = new ClickListener(textLabel);
