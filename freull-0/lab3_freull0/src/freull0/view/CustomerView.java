@@ -17,9 +17,9 @@ public class CustomerView
 
         BankController logic = new BankController();
         CustomerLogic cLogic = new CustomerLogic();
-        logic.createCustomer(firstName, lastName, pNo);
+        cLogic.createCustomer(firstName, lastName, pNo);
         Customer createdCustomer = cLogic.findCustomer(pNo);
-        System.out.println("cust" + createdCustomer);
+        System.out.println("customer" + createdCustomer.toString());
         JOptionPane.showMessageDialog(null, "Customer created: " + createdCustomer, "New customer",
                 JOptionPane.WARNING_MESSAGE);
 
