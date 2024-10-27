@@ -3,31 +3,43 @@ package freull0;
 import freull0.view.CustomerView;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 
 public class GUI extends JFrame
 {
     private static final int WIDTH = 600;
     private static final int HEIGHT = 600;
-    private final JLabel textLabel = new JLabel();
+    private final JLabel label = new JLabel();
     private final JTextField textField = new JTextField(20);
-    private final JLabel textLabel2 = new JLabel();
+    private final JButton imageButton = new JButton("Bild 1");
+    private final JLabel imageLabel = new JLabel();
 
     public GUI()
     {
+        setLocation(400, 400);
         setSize(WIDTH, HEIGHT);
-        createTextInputFieldComponent();
+        createButtonComponents();
+
+    }
+
+    private void createImageComponent()
+    {
+        ImageIcon image = new ImageIcon("photo.png");
+        imageLabel.setIcon(image);
+        imageLabel.setVisible(true);
+
     }
 
     private void createTextInputFieldComponent()
     {
-        ActionListener listener = new TextListener(textField, textLabel);
+        ActionListener listener = new TextListener(textField, label);
         textField.addActionListener(listener);
         JPanel panel = new JPanel();
         JLabel label = new JLabel("Enter firstname ");
         panel.add(label);
         panel.add(textField);
-        panel.add(textLabel);
+        panel.add(this.label);
 
         add(panel);
 
@@ -35,25 +47,24 @@ public class GUI extends JFrame
 
     private void createButtonComponents()
     {
-        JButton redButton = new JButton("Röd");
-        JButton blueButton = new JButton("blå");
-        JButton greenButton = new JButton("grön");
-        JTextField createCustomerField = new JTextField();
-        //I exemplet så skapade vi en inre klass för att kunna använda privata metoder,
-        // jag lade koden i en egen klass ClickListener istället
-        ActionListener listener = new ClickListener(textLabel);
-        redButton.addActionListener(listener);
-        blueButton.addActionListener(listener);
-        greenButton.addActionListener(listener);
+        ActionListener listener = new ClickListener(imageLabel, imageButton);
+        imageButton.addActionListener(listener);
+
+        //skapa och sätt storlek på bild
+        ImageIcon image = new ImageIcon(getClass().getClassLoader().getResource("java-icon.png"));
+        Image scaledImage = image.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+        ImageIcon resizedIcon = new ImageIcon(scaledImage);
+
+        imageLabel.setIcon(resizedIcon);
+        imageLabel.setVisible(false);
 
         //Arbetsyta
         JPanel panel = new JPanel();
 
-        panel.add(redButton);
-        panel.add(blueButton);
-        panel.add(greenButton);
-        panel.add(textLabel);
+        panel.add(imageButton);
+        panel.add(imageLabel);
         add(panel);
+
     }
 
     public static void main(String[] args)

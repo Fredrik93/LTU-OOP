@@ -6,19 +6,25 @@ import java.awt.event.ActionListener;
 
 public class ClickListener implements ActionListener
 {
-    private final JLabel textLabel;
+    private final JLabel label;
+    private final JButton button;
 
-    public ClickListener(JLabel textLabel)
+    public ClickListener(JLabel textLabel, JButton button)
     {
-        this.textLabel = textLabel;
+        this.label = textLabel;
+        this.button = button;
     }
 
     @Override
     public void actionPerformed(ActionEvent e)
     {
         JButton clickedButton = (JButton) e.getSource();
-        String text = clickedButton.getText();
-        textLabel.setText(text);
-        System.out.println("Clicked ");
+        label.setVisible(false);
+        System.out.println(clickedButton.getText() + " button : " + button.getText());
+        if(clickedButton == button)
+        {
+            System.out.println("Found");
+            label.setVisible(true);
+        }
     }
 }
