@@ -439,7 +439,7 @@ public class TestBank3
     private void testingGetCustomer(String pNo, String facit)
     {
         boolean pass = false;
-        List<String> result = bank.getCustomer(pNo);
+        List<String> result = bank.getCustomerString(pNo);
 
         // If the customer isn't in the bank result should be null
         // I want to use the string "null" to compare with

@@ -57,6 +57,8 @@ public class GUI extends JFrame
         JPanel panel = new JPanel();
 
         panel.add(customerButton);
+        panel.add(this.customerButton);
+        panel.add(customerLabel);
         add(panel);
     }
 

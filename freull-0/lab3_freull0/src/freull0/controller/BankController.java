@@ -78,9 +78,20 @@ public class BankController
      * @param pNo
      *         personnummer return lista med information om den specifika kunden
      */
-    public List<String> getCustomer(String pNo)
+    public List<String> getCustomerString(String pNo)
     {
         return customerLogic.getCustomer(pNo);
+    }
+
+    /**
+     * hämtar en kund
+     *
+     * @param pNo
+     *         personnummer return lista med information om den specifika kunden
+     */
+    public Customer getCustomer(String pNo)
+    {
+        return customerLogic.findCustomer(pNo);
     }
 
     /**
