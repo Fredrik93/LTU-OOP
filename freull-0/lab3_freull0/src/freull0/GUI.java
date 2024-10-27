@@ -1,5 +1,6 @@
 package freull0;
 
+import freull0.controller.BankController;
 import freull0.view.CustomerView;
 
 import javax.swing.*;
@@ -13,13 +14,16 @@ public class GUI extends JFrame
     private final JLabel label = new JLabel();
     private final JTextField textField = new JTextField(20);
     private final JButton imageButton = new JButton("Bild 1");
+    private final JButton customerButton = new JButton("Skapa kund");
     private final JLabel imageLabel = new JLabel();
+    private final JLabel customerLabel = new JLabel();
+    BankController bank = new BankController();
 
     public GUI()
     {
         setLocation(400, 400);
         setSize(WIDTH, HEIGHT);
-        createButtonComponents();
+        createCustomerComponent();
 
     }
 
@@ -45,9 +49,20 @@ public class GUI extends JFrame
 
     }
 
+    private void createCustomerComponent()
+    {
+        ActionListener listener = new ClickListener(customerLabel, customerButton, bank);
+        customerButton.addActionListener(listener);
+
+        JPanel panel = new JPanel();
+
+        panel.add(customerButton);
+        add(panel);
+    }
+
     private void createButtonComponents()
     {
-        ActionListener listener = new ClickListener(imageLabel, imageButton);
+        ActionListener listener = new ClickListener(imageLabel, imageButton, bank);
         imageButton.addActionListener(listener);
 
         //skapa och sätt storlek på bild
