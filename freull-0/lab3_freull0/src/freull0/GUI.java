@@ -4,7 +4,6 @@ import freull0.controller.BankController;
 import freull0.model.Customer;
 
 import javax.swing.*;
-import java.util.List;
 
 public class GUI extends JFrame
 {
@@ -31,51 +30,32 @@ public class GUI extends JFrame
         // Create the menu bar
         JMenuBar menuBar = new JMenuBar();
 
-        // Add Menues
-        JMenu customerMenu = new JMenu("Customer");
-        JMenu accountMenu = new JMenu("Account");
-        JMenu transactionMenu = new JMenu("Transaction");
+        // Add Menu
+
+        JMenu menu = new JMenu("Options");
 
         // Add Menu Items and Listeners
-        addCustomerMenuItems(customerMenu);
-        addAccountMenuItems(accountMenu);
-        addTransactionMenuItems(transactionMenu);
+        addMenuItems(menu);
 
         // Add menus to the menu bar
-        menuBar.add(customerMenu);
-        menuBar.add(accountMenu);
-        menuBar.add(transactionMenu);
+        menuBar.add(menu);
 
         // Set the menu bar
         setJMenuBar(menuBar);
     }
 
-    private void addCustomerMenuItems(JMenu menu)
+    private void addMenuItems(JMenu menu)
     {
-        JMenuItem createCustomer = new JMenuItem("Create Customer");
-        createCustomer.addActionListener(e -> {
-            String name = JOptionPane.showInputDialog("Enter first name:");
-            String surname = JOptionPane.showInputDialog("Enter last name:");
-            String pNo = JOptionPane.showInputDialog("Enter personal number:");
-            boolean success = controller.createCustomer(name, surname, pNo);
-            showMessage(success ? "Customer created successfully!" : "Failed to create customer.");
-        });
+        CustomerListener customerListener = new CustomerListener(controller);
+
+        JMenuItem createCustomer = new JMenuItem("Create new customer");
+        createCustomer.addActionListener(customerListener);
 
         JMenuItem changeCustomerName = new JMenuItem("Change Customer Name");
-        changeCustomerName.addActionListener(e -> {
-            String name = JOptionPane.showInputDialog("Enter new first name:");
-            String surname = JOptionPane.showInputDialog("Enter new last name:");
-            String pNo = JOptionPane.showInputDialog("Enter personal number:");
-            boolean success = controller.changeCustomerName(name, surname, pNo);
-            showMessage(success ? "Customer name updated successfully!" : "Failed to update customer name.");
-        });
+        changeCustomerName.addActionListener(customerListener);
 
         JMenuItem getAllCustomers = new JMenuItem("Get All Customers");
-        getAllCustomers.addActionListener(e -> {
-            List<String> customers = controller.getAllCustomersAsStrings();
-            JOptionPane.showMessageDialog(this, String.join("\n", customers), "Customers",
-                    JOptionPane.INFORMATION_MESSAGE);
-        });
+        getAllCustomers.addActionListener(customerListener);
 
         JMenuItem getCustomer = new JMenuItem("Get a customer");
         getCustomer.addActionListener(e -> {

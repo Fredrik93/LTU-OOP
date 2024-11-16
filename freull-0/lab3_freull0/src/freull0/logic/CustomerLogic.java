@@ -94,6 +94,7 @@ public class CustomerLogic
 
         if(customerExist)
         {
+            System.out.println("Customer exists");
             return false;
         }
         Customer newCustomer = new Customer(name, surname, pNo);
