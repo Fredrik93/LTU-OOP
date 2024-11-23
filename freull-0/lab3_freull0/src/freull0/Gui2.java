@@ -183,21 +183,35 @@ public class Gui2 extends JFrame {
     private void depositPanel() {
         JPanel panel = new JPanel();
 
-        JButton depositBtn = new JButton("Deposit from account");
-        JLabel pNoLabel = new JLabel("Enter personal number: ");
-        pNoField = new JTextField(15);
+        JButton depositBtn = new JButton("Deposit into account");
 
-        JLabel accountNumberLabel = new JLabel("Enter accountnumber: ");
-        accountNumberField = new JTextField(10);
+        List<String> customersPnoList = bankController.getCustomers()
+                .stream()
+                .map(Customer::getpNo)
+                .toList();
+        String[] pnoArray = customersPnoList.toArray(new String[0]);
 
-        JLabel amountLabel = new JLabel("Enter amont to deposit");
+        JLabel personalNumbersLabel = new JLabel("Select personal number ");
+        //Antar att JComboBox inte tar en List <String>, så får konvertera till en "gammaldags" array.
+        personalNumbersField = new JComboBox<>(pnoArray);
+        JButton selectCustomerBtn = new JButton("Search for customer accounts");
+
+        // Add ActionListener to print the selected value
+        selectCustomerBtn.addActionListener(new SelectCustomerDropDown());
+
+        JLabel accountNumberLabel = new JLabel("Select account number: ");
+        String[] accountNumbers = {};
+        accountNumbersField = new JComboBox<>(accountNumbers);
+
+        JLabel amountLabel = new JLabel("Enter amount to deposit");
         amountField = new JTextField(3);
 
-        panel.add(pNoLabel);
-        panel.add(pNoField);
+        panel.add(personalNumbersLabel);
+        panel.add(personalNumbersField);
+        panel.add(selectCustomerBtn);
 
         panel.add(accountNumberLabel);
-        panel.add(accountNumberField);
+        panel.add(accountNumbersField); // Use JComboBox instead of JTextField for account numbers
 
         panel.add(amountLabel);
         panel.add(amountField);
@@ -392,10 +406,10 @@ public class Gui2 extends JFrame {
             System.out.println(result);
             // Show the result in a dialog
             JOptionPane.showMessageDialog(
-                    null, // Parent component (null centers the dialog on the screen)
-                    result, // Message to display
-                    "Withdrawal Result", // Title of the dialog
-                    JOptionPane.INFORMATION_MESSAGE // Type of dialog
+                    null,
+                    result,
+                    "Withdrawal Result",
+                    JOptionPane.INFORMATION_MESSAGE
             );
 
         }
@@ -404,15 +418,39 @@ public class Gui2 extends JFrame {
     private class CreateDepositListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String pNo = pNoField.getText()
-                    .trim();
-            int accountNumber = Integer.parseInt(accountNumberField.getText()
-                                                         .trim());
-            int amount = Integer.parseInt(amountField.getText()
-                                                  .trim());
 
-            bankController.deposit(pNo, accountNumber, amount);
-            System.out.println("Deposit successful: " + bankController.getAccount(pNo, accountNumber));
+            if (amountField.getText()
+                    .isEmpty()) {
+                amountField.setText("0");
+                //throw new IllegalArgumentException("Should be more than 0");
+            }
+            int amount =  Integer.parseInt(amountField.getText());
+
+            selectedPNo = (String) personalNumbersField.getSelectedItem();
+            System.out.println("Selected pno: " + selectedPNo);
+
+            String selectedAccountNumber = (String) accountNumbersField.getSelectedItem();
+
+            assert selectedAccountNumber != null;
+            System.out.println("amonut is " + amountField.getText());
+            bankController.deposit(selectedPNo, Integer.parseInt(selectedAccountNumber), amount);
+            boolean successfulDeposit =
+                    bankController.getAccount(selectedPNo, Integer.parseInt(selectedAccountNumber)) != null;
+
+            //Skriv ut hur det gick
+            String result = successfulDeposit
+                            ? "Deposit successful: " + bankController.getAccount(selectedPNo, Integer.parseInt(
+                    selectedAccountNumber))
+                            : " Deposit not successful";
+            System.out.println(result);
+            // Show the result in a dialog
+            JOptionPane.showMessageDialog(
+                    null,
+                    result,
+                    "Withdrawal Result",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+
         }
     }
 
