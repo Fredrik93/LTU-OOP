@@ -366,15 +366,12 @@ public class Gui2 extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
 
-            int NO_WITHDRAW_INPUT_FROM_USER = 0;
             if (amountField.getText()
                     .isEmpty()) {
                 amountField.setText("0");
                 //throw new IllegalArgumentException("Should be more than 0");
             }
-            int amount = amountField.getText()
-                                 .isEmpty() ? Integer.parseInt(amountField.getText()
-                                                                       .trim()) : NO_WITHDRAW_INPUT_FROM_USER;
+            int amount =  Integer.parseInt(amountField.getText());
 
             selectedPNo = (String) personalNumbersField.getSelectedItem();
             System.out.println("Selected pno: " + selectedPNo);
@@ -382,6 +379,7 @@ public class Gui2 extends JFrame {
             String selectedAccountNumber = (String) accountNumbersField.getSelectedItem();
 
             assert selectedAccountNumber != null;
+            System.out.println("amonut is " + amountField.getText());
             bankController.withdraw(selectedPNo, Integer.parseInt(selectedAccountNumber), amount);
             boolean successfulWithdrawal =
                     bankController.getAccount(selectedPNo, Integer.parseInt(selectedAccountNumber)) != null;
@@ -392,9 +390,17 @@ public class Gui2 extends JFrame {
                     selectedAccountNumber))
                             : " Withdrawal not successful";
             System.out.println(result);
+            // Show the result in a dialog
+            JOptionPane.showMessageDialog(
+                    null, // Parent component (null centers the dialog on the screen)
+                    result, // Message to display
+                    "Withdrawal Result", // Title of the dialog
+                    JOptionPane.INFORMATION_MESSAGE // Type of dialog
+            );
+
         }
     }
-    //Actionlistener for withdrawing an amount
+    //Actionlistener for deopsiting an amount
     private class CreateDepositListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
