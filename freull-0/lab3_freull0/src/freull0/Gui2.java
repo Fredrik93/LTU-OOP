@@ -9,18 +9,15 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Gui2 extends JFrame {
     private JTextField nameField;
     private JTextField lastNameField;
     private JTextField pNoField;
-    private JTextField accountNumberField;
     private JTextField amountField;
-    private final JLabel messageLabel;
+    private JLabel messageLabel;
     private final BankController bankController;
     private JComboBox<String> accountNumbersField;
     private JComboBox<String> personalNumbersField;
@@ -37,15 +34,19 @@ public class Gui2 extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        //create test customers. remove later.
-        bankController.createCustomer("Jim", "johanssen", "1");
-        bankController.createCustomer("Adam", "Niklasson", "2");
-        //create some testaccounts
-        bankController.createSavingsAccount("1");
-        bankController.createCreditAccount("1");
-        bankController.deposit("1", 1001, 1000);
-        bankController.deposit("1", 1002, 1000);
-        System.out.println("Customers created .. " + bankController.getCustomers());
+        //create a few customers. saves a bit of time when testing.
+        bankController.createCustomer("Jim", "Johanssen", "850404-2791");
+        bankController.createCustomer("Adam", "Niklasson", "640112-4354");
+        bankController.createCustomer("Miranda", "Amro", "071212-4365");
+        //create some test accounts
+        bankController.createSavingsAccount("850404-2791");
+        bankController.createCreditAccount("850404-2791");
+        bankController.createSavingsAccount("640112-4354");
+        bankController.createSavingsAccount("640112-4354");
+
+
+
+
 
         // Create the menu bar and the "Create Customer" menu item
         JMenuBar menuBar = new JMenuBar();
@@ -228,17 +229,33 @@ public class Gui2 extends JFrame {
         // Create a panel for the customer input
         JPanel panel = new JPanel(new FlowLayout());
 
-        JLabel pNoLabel = new JLabel("Enter personal number: ");
-        pNoField = new JTextField(15);
+        //Set personal number input
+        List<String> customersPnoList = bankController.getCustomers()
+                .stream()
+                .map(Customer::getpNo)
+                .toList();
+        String[] pnoArray = customersPnoList.toArray(new String[0]);
+
+        JLabel personalNumbersLabel = new JLabel("Select personal number ");
+        //Antar att JComboBox inte tar en List <String>, så får konvertera till en "gammaldags" array.
+        personalNumbersField = new JComboBox<>(pnoArray);
+        JButton selectCustomerBtn = new JButton("Search for customer accounts");
+
+        // Add ActionListener to print the selected value
+        selectCustomerBtn.addActionListener(new SelectCustomerDropDown());
+
 
         JButton submitgetCustomerButton = new JButton("Get customer");
         // Action listener for the submit button
         submitgetCustomerButton.addActionListener(new GetCustomerButtonListener());
 
-        panel.add(pNoLabel);
-        panel.add(pNoField);
+        panel.add(personalNumbersLabel);
+        panel.add(personalNumbersField);
 
         panel.add(submitgetCustomerButton);
+
+        messageLabel = new JLabel("", SwingConstants.CENTER);
+        panel.add(messageLabel);
 
         setMainPanel(panel);
     }
@@ -263,21 +280,36 @@ public class Gui2 extends JFrame {
 
     private void closeAccountPanel() {
         JPanel panel = new JPanel();
-        JLabel pNoLabel = new JLabel("Enter the personal number");
-        pNoField = new JTextField(10);
+        //Set personal number input
+        List<String> customersPnoList = bankController.getCustomers()
+                .stream()
+                .map(Customer::getpNo)
+                .toList();
+        String[] pnoArray = customersPnoList.toArray(new String[0]);
 
-        JLabel accountNumberLabel = new JLabel("Enter account number: ");
-        accountNumberField = new JTextField(10);
+        JLabel personalNumbersLabel = new JLabel("Select personal number ");
+        //Antar att JComboBox inte tar en List <String>, så får konvertera till en "gammaldags" array.
+        personalNumbersField = new JComboBox<>(pnoArray);
+        JButton selectCustomerBtn = new JButton("Search for customer accounts");
+
+        // Add ActionListener to print the selected value
+        selectCustomerBtn.addActionListener(new SelectCustomerDropDown());
+
+        JLabel accountNumberLabel = new JLabel("Select account number: ");
+        String[] accountNumbers = {};
+        accountNumbersField = new JComboBox<>(accountNumbers);
 
         JButton closeAccountButton = new JButton("Close account");
 
         closeAccountButton.addActionListener(new CloseAccountButtonListener());
 
-        panel.add(pNoLabel);
-        panel.add(pNoField);
+        panel.add(personalNumbersLabel);
+        panel.add(personalNumbersField);
+
+        panel.add(selectCustomerBtn);
 
         panel.add(accountNumberLabel);
-        panel.add(accountNumberField);
+        panel.add(accountNumbersField);
 
         panel.add(closeAccountButton);
 
@@ -285,15 +317,24 @@ public class Gui2 extends JFrame {
     }
     private void deleteCustomerPanel() {
         JPanel panel = new JPanel();
-        JLabel pNoLabel = new JLabel("Enter the personal number");
-        pNoField = new JTextField(10);
+
+        //Set personal number input
+        List<String> customersPnoList = bankController.getCustomers()
+                .stream()
+                .map(Customer::getpNo)
+                .toList();
+        String[] pnoArray = customersPnoList.toArray(new String[0]);
+
+        JLabel personalNumbersLabel = new JLabel("Select personal number ");
+        //Antar att JComboBox inte tar en List <String>, så får konvertera till en "gammaldags" array.
+        personalNumbersField = new JComboBox<>(pnoArray);
 
         JButton deletCustomerButton = new JButton("Delete customer");
 
         deletCustomerButton.addActionListener(new DeleteCustomerButtonListener());
 
-        panel.add(pNoLabel);
-        panel.add(pNoField);
+        panel.add(personalNumbersLabel);
+        panel.add(personalNumbersField);
 
         panel.add(deletCustomerButton);
         setMainPanel(panel);
@@ -316,20 +357,35 @@ public class Gui2 extends JFrame {
         }
     }
     // ActionListener class for closing an account
+
+    /**
+     * Notera att vid borttagning av konto ska information om
+     * kontot inklusive ränta presentaras för användaren i det grafiska gränssnittet,
+     * detta gäller även när man tar bort en kund då ska man få information om
+     * alla borttagna konton
+     */
     private class CloseAccountButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String pNo = pNoField.getText()
-                    .trim();
-            String accountNumber = accountNumberField.getText()
-                    .trim();
-            if (!pNo.isEmpty()) {
-                bankController.closeAccount(pNo, Integer.parseInt(accountNumber));
-                System.out.println("account closed: " + bankController.getCustomer(pNo)
-                        .getAccounts());
+
+            selectedPNo = (String) personalNumbersField.getSelectedItem();
+            System.out.println("Selected pno: " + selectedPNo);
+
+            String accountNumber = (String) accountNumbersField.getSelectedItem();
+
+            if (!selectedPNo.isEmpty()) {
+                assert accountNumber != null;
+                String resultMessage =
+                        bankController.closeAccount(selectedPNo, Integer.parseInt(accountNumber));
+                System.out.println("account closed: " + resultMessage);
+
+                JOptionPane.showMessageDialog(null, "account closed: " + resultMessage
+                        , "Close account", JOptionPane.INFORMATION_MESSAGE);
+
             } else {
                 messageLabel.setText("Incorrect pno.");
             }
+
         }
     }
 
@@ -337,11 +393,14 @@ public class Gui2 extends JFrame {
     private class DeleteCustomerButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String pNo = pNoField.getText()
-                    .trim();
-            if (!pNo.isEmpty()) {
-                System.out.println("Deleting customer: " + bankController.getCustomer(pNo));
-                bankController.deleteCustomer(pNo);
+            selectedPNo = (String) personalNumbersField.getSelectedItem();
+            System.out.println("Selected pno: " + selectedPNo);
+
+            if (!selectedPNo.isEmpty()) {
+                String resultMessage = bankController.deleteCustomer(selectedPNo).toString();
+                System.out.println("Deleting customer: " + resultMessage);
+                JOptionPane.showMessageDialog(null, "Customer deleted: " + resultMessage
+                        , "Delete customer", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 messageLabel.setText("Incorrect pno.");
             }
@@ -385,7 +444,7 @@ public class Gui2 extends JFrame {
                 amountField.setText("0");
                 //throw new IllegalArgumentException("Should be more than 0");
             }
-            int amount =  Integer.parseInt(amountField.getText());
+            int amount = Integer.parseInt(amountField.getText());
 
             selectedPNo = (String) personalNumbersField.getSelectedItem();
             System.out.println("Selected pno: " + selectedPNo);
@@ -405,12 +464,7 @@ public class Gui2 extends JFrame {
                             : " Withdrawal not successful";
             System.out.println(result);
             // Show the result in a dialog
-            JOptionPane.showMessageDialog(
-                    null,
-                    result,
-                    "Withdrawal Result",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            JOptionPane.showMessageDialog(null, result, "Withdrawal Result", JOptionPane.INFORMATION_MESSAGE);
 
         }
     }
@@ -424,15 +478,13 @@ public class Gui2 extends JFrame {
                 amountField.setText("0");
                 //throw new IllegalArgumentException("Should be more than 0");
             }
-            int amount =  Integer.parseInt(amountField.getText());
+            int amount = Integer.parseInt(amountField.getText());
 
             selectedPNo = (String) personalNumbersField.getSelectedItem();
-            System.out.println("Selected pno: " + selectedPNo);
 
             String selectedAccountNumber = (String) accountNumbersField.getSelectedItem();
 
             assert selectedAccountNumber != null;
-            System.out.println("amonut is " + amountField.getText());
             bankController.deposit(selectedPNo, Integer.parseInt(selectedAccountNumber), amount);
             boolean successfulDeposit =
                     bankController.getAccount(selectedPNo, Integer.parseInt(selectedAccountNumber)) != null;
@@ -444,12 +496,7 @@ public class Gui2 extends JFrame {
                             : " Deposit not successful";
             System.out.println(result);
             // Show the result in a dialog
-            JOptionPane.showMessageDialog(
-                    null,
-                    result,
-                    "Withdrawal Result",
-                    JOptionPane.INFORMATION_MESSAGE
-            );
+            JOptionPane.showMessageDialog(null, result, "Withdrawal Result", JOptionPane.INFORMATION_MESSAGE);
 
         }
     }
@@ -476,14 +523,14 @@ public class Gui2 extends JFrame {
     private class GetCustomerButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            String pNo = pNoField.getText()
-                    .trim();
-            Customer customer;
-            if (!pNo.isEmpty()) {
 
-                customer = bankController.getCustomer(pNo);
-                System.out.println(customer.toString());
-                messageLabel.setText("Customer found: " + " " + customer.getFirstName() + " " + customer.getLastName());
+            selectedPNo = (String) personalNumbersField.getSelectedItem();
+
+            Customer customer;
+            if (!selectedPNo.isEmpty()) {
+
+                customer = bankController.getCustomer(selectedPNo);
+                messageLabel.setText(customer.toString());
             } else {
                 messageLabel.setText("Incorrect pno.");
             }
@@ -494,12 +541,34 @@ public class Gui2 extends JFrame {
     private class GetAllCustomersButtonListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
-            bankController.getCustomers();
-            bankController.getCustomers()
-                    .stream()
-                    .forEach(System.out::println);
+            // Fetch the list of customers
+            List<Customer> customers = bankController.getCustomers();
+
+            if (customers.isEmpty()) {
+                // Show a message if there are no customers
+                JOptionPane.showMessageDialog(
+                        null,
+                        "No customers found.",
+                        "Customer List",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            } else {
+                // Format the list of customers into a readable string
+                String customerList = customers.stream()
+                        .map(customer -> "Name: " + customer.getFirstName() + ", Personal Number: " + customer.getpNo())
+                        .collect(Collectors.joining("\n"));
+
+                // Show the formatted customer list in a dialog
+                JOptionPane.showMessageDialog(
+                        null,
+                        customerList,
+                        "Customer List",
+                        JOptionPane.INFORMATION_MESSAGE
+                );
+            }
         }
     }
+
 
     // ActionListener class for the submit button
     private class SubmitButtonListener implements ActionListener {
