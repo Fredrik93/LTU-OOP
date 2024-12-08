@@ -1,5 +1,6 @@
 package freull0.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -15,7 +16,7 @@ import java.util.Locale;
  * @author Fredrik Ullman, freull-0
  */
 
-public abstract class Account
+public abstract class Account implements Serializable
 {
     protected BigDecimal amount;
     private final BigDecimal interestRate;

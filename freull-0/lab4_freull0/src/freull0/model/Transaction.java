@@ -1,5 +1,6 @@
 package freull0.model;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -21,6 +22,7 @@ import java.util.Locale;
  *         kontoId
  */
 public record Transaction(LocalDateTime date, int transactionAmount, BigDecimal currentAmount, int accountId)
+        implements Serializable
 {
 
     public String formatDate()

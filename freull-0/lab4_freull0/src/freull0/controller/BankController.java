@@ -185,4 +185,19 @@ public class BankController
         Customer customer = customerLogic.findCustomer(pNO);
         return accountLogic.createCreditAccount(customer);
     }
+
+    //********** Input output methods *********
+
+    /**
+     * Save all customers to a file
+     */
+    public void saveAllCustomersToFile()
+    {
+        customerLogic.saveAllCustomers(getCustomers());
+    }
+
+    public void loadAllCustomersFromFile()
+    {
+        customerLogic.loadCustomersFromFile();
+    }
 }

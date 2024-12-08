@@ -1,5 +1,6 @@
 package freull0.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ import java.util.List;
  * @author Fredrik Ullman, freull-0
  */
 
-public class Customer
+public class Customer implements Serializable
 {
     private final String pNo;
     private String firstName;

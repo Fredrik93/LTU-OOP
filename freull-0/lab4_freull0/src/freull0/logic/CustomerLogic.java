@@ -3,12 +3,13 @@ package freull0.logic;
 import freull0.model.Account;
 import freull0.model.Customer;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class CustomerLogic
 {
-    private final List<Customer> customers = new ArrayList<>();
+    private List<Customer> customers = new ArrayList<>();
 
     /**
      * Hitta en specifik kund
@@ -189,8 +190,8 @@ public class CustomerLogic
     /**
      * Tar bort en kund
      *
-     * @param customer
-     *         kunddata
+     * @param pNo
+     *         personnummer kunddata
      */
     public List<String> deleteCustomer(String pNo)
     {
@@ -227,5 +228,40 @@ public class CustomerLogic
             }
         }
         return null;
+    }
+
+    public boolean saveAllCustomers(List<Customer> allCustomers)
+    {
+        try
+        {
+            ObjectOutputStream utfil = new ObjectOutputStream(new FileOutputStream("all-customers.dat"));
+            utfil.writeObject(allCustomers);
+            System.out.println("All customers saved successfully." + customers.size() + " customers");
+        }
+        catch(IOException e)
+        {
+            System.out.println("Something went wrong");
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    public void loadCustomersFromFile()
+    {
+        ObjectInputStream infil;
+        try
+        {
+            infil = new ObjectInputStream(new FileInputStream("all-customers.dat"));
+            List<Customer> allCustomers = (List<Customer>) infil.readObject();
+            //Print each customer in the file
+            allCustomers.stream().map(c -> "Kund: " + c).forEach(System.out::println);
+            customers.addAll(allCustomers);
+
+        }
+        catch(IOException | ClassNotFoundException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }

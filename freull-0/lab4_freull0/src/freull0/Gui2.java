@@ -48,15 +48,7 @@ public class Gui2 extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        //create a few customers. saves a bit of time when testing.
-        bankController.createCustomer("Jim", "Johanssen", TEST_CUSTOMER_1);
-        bankController.createCustomer("Adam", "Niklasson", TEST_CUSTOMER_2);
-        bankController.createCustomer("Miranda", "Amro", "071212-4365");
-        //create some test accounts
-        bankController.createSavingsAccount(TEST_CUSTOMER_1);
-        bankController.createSavingsAccount(TEST_CUSTOMER_2);
-        bankController.createCreditAccount(TEST_CUSTOMER_1);
-        bankController.createCreditAccount(TEST_CUSTOMER_2);
+        // createTestCustomers();
 
         // Create the menu bar and the "Create Customer" menu item
         JMenuBar menuBar = new JMenuBar();
@@ -368,7 +360,8 @@ public class Gui2 extends JFrame
 
         JButton loadBankBtn = new JButton("Load bank data");
         loadBankBtn.addActionListener(e -> {
-            messageLabel.setText("Loading... (not really, don't wait for a response)");
+            bankController.loadAllCustomersFromFile();
+            messageLabel.setText("Customers successfully loaded!");
         });
 
         panel.add(loadBankBtn);
@@ -384,7 +377,8 @@ public class Gui2 extends JFrame
 
         JButton saveBankBtn = new JButton("Save bank data");
         saveBankBtn.addActionListener(e -> {
-            messageLabel.setText("Saving... (not really, don't wait for a response)");
+            bankController.saveAllCustomersToFile();
+            messageLabel.setText("Saving... ");
         });
 
         panel.add(saveBankBtn);
@@ -673,6 +667,19 @@ public class Gui2 extends JFrame
         add(panel, BorderLayout.CENTER);
         revalidate();
         repaint();
+    }
+
+    public void createTestCustomers()
+    {
+        //create a few customers. saves a bit of time when testing.
+        bankController.createCustomer("Jim", "Johanssen", TEST_CUSTOMER_1);
+        bankController.createCustomer("Adam", "Niklasson", TEST_CUSTOMER_2);
+        bankController.createCustomer("Miranda", "Amro", "071212-4365");
+        //create some test accounts
+        bankController.createSavingsAccount(TEST_CUSTOMER_1);
+        bankController.createSavingsAccount(TEST_CUSTOMER_2);
+        bankController.createCreditAccount(TEST_CUSTOMER_1);
+        bankController.createCreditAccount(TEST_CUSTOMER_2);
     }
 
     public static void main(String[] args)
