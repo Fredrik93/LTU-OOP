@@ -1,0 +1,3 @@
+#### Plan
+Det känns rimligt att refaktorera all logik in i separata Logik-klasser TransactionLogic, AccountLogic och CustomerLogic som sedan används i en Controller, BankController. Det blir mitt första steg.
+Jag har flyttat ut den mesta av logiken till en mapp som heter logic och mina controllers kommer finnas i en mapp controller.
