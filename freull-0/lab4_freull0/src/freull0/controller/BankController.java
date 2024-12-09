@@ -6,6 +6,7 @@ import freull0.logic.TransactionLogic;
 import freull0.model.Account;
 import freull0.model.Customer;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,6 +20,7 @@ public class BankController
     AccountLogic accountLogic = new AccountLogic();
     CustomerLogic customerLogic = new CustomerLogic();
     TransactionLogic transactionLogic = new TransactionLogic();
+    List<Integer> listOfAccountNumbers = new ArrayList<>();
 
     /**
      * Används för att sätt in pengar på ett konto
@@ -198,6 +200,15 @@ public class BankController
 
     public void loadAllCustomersFromFile()
     {
-        customerLogic.loadCustomersFromFile();
+
+        List<Customer> customers = customerLogic.loadCustomersFromFile();
+        for(Customer c : customers)
+        {
+            listOfAccountNumbers.addAll(c.getAccounts().stream().map(a -> a.getAccountNumber()).toList());
+
+        }
+        listOfAccountNumbers.forEach(accountNumber -> System.out.println("Account Number: " + accountNumber));
+
     }
+
 }

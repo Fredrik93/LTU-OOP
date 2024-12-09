@@ -8,6 +8,22 @@ import java.util.List;
 
 public class AccountLogic
 {
+    List<Integer> listOfAccountNumbers = new ArrayList<>();
+
+    //Add numbers to accountnumbers list
+    public boolean addAccountNumberToList(int accountNumber)
+    {
+        //add to list of account numbers
+        listOfAccountNumbers.add(accountNumber);
+        System.out.println("account number added: " + listOfAccountNumbers.getLast().toString());
+        return true;
+    }
+
+    //Get list of accountnumbers
+    public List<Integer> getAccountNumberList()
+    {
+        return listOfAccountNumbers;
+    }
 
     public int createCreditAccount(Customer customer)
     {
@@ -17,6 +33,7 @@ public class AccountLogic
         {
             CreditAccount creditAccount = new CreditAccount(amount, interestRate);
             customer.addAccountToCustomer(creditAccount);
+            addAccountNumberToList(creditAccount.getAccountNumber());
             return creditAccount.getAccountNumber();
         }
         return -1;
@@ -25,11 +42,12 @@ public class AccountLogic
     /**
      * Skapar ett konto för en kund
      *
-     * @param pNo
-     *         personnummer return det nya kontonummret
+     * @param customer
+     *         kunden personnummer return det nya kontonummret
      */
     public int createSavingsAccount(Customer customer)
     {
+
         if(customer == null)
         {
             return -1;
@@ -37,6 +55,7 @@ public class AccountLogic
 
         Account newAccount = new SavingsAccount(new BigDecimal(0), new BigDecimal("2.4"));
         customer.addAccountToCustomer(newAccount);
+        addAccountNumberToList(newAccount.getAccountNumber());
         return newAccount.getAccountNumber();
     }
 

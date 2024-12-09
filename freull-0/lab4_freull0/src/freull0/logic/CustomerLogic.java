@@ -48,7 +48,6 @@ public class CustomerLogic
      */
     public List<Customer> getCustomers()
     {
-
         return customers;
     }
 
@@ -247,21 +246,25 @@ public class CustomerLogic
         return true;
     }
 
-    public void loadCustomersFromFile()
+    public List<Customer> loadCustomersFromFile()
     {
         ObjectInputStream infil;
+        List<Customer> allCustomers;
         try
         {
             infil = new ObjectInputStream(new FileInputStream("all-customers.dat"));
-            List<Customer> allCustomers = (List<Customer>) infil.readObject();
+            allCustomers = (List<Customer>) infil.readObject();
             //Print each customer in the file
             allCustomers.stream().map(c -> "Kund: " + c).forEach(System.out::println);
-            customers.addAll(allCustomers);
+            // customers.addAll(allCustomers);
+            //du stannade vid att om du laddar filen och sen lägger till konton på miranda amro så sparas  dom inte till filen. du behöver göra något för att spara de till filen när du skapar kontona.
 
         }
         catch(IOException | ClassNotFoundException e)
         {
             throw new RuntimeException(e);
         }
+        return allCustomers;
     }
+
 }

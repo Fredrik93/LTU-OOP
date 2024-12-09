@@ -48,7 +48,7 @@ public class Gui2 extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // createTestCustomers();
+        createTestCustomers();
 
         // Create the menu bar and the "Create Customer" menu item
         JMenuBar menuBar = new JMenuBar();
