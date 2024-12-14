@@ -256,8 +256,13 @@ public class CustomerLogic
             allCustomers = (List<Customer>) infil.readObject();
             //Print each customer in the file
             allCustomers.stream().map(c -> "Kund: " + c).forEach(System.out::println);
-            // customers.addAll(allCustomers);
-            //du stannade vid att om du laddar filen och sen lägger till konton på miranda amro så sparas  dom inte till filen. du behöver göra något för att spara de till filen när du skapar kontona.
+            allCustomers.stream().map(c -> createCustomer(c.getFirstName(),c.getLastName(),c.getpNo()));
+
+
+             customers.addAll(allCustomers);
+            //du stannade vid att om du laddar filen och sen lägger till konton på miranda amro så sparas  dom inte till filen.
+            // du behöver göra något för att spara de till filen när du skapar kontona.
+
 
         }
         catch(IOException | ClassNotFoundException e)
