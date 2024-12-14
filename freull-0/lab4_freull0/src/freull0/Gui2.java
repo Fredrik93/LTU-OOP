@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -48,7 +49,8 @@ public class Gui2 extends JFrame
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        createTestCustomers();
+        // uncomment this to quickly create test users
+        //createTestCustomers();
 
         // Create the menu bar and the "Create Customer" menu item
         JMenuBar menuBar = new JMenuBar();
@@ -63,7 +65,7 @@ public class Gui2 extends JFrame
         JMenuItem deleteCustomerItem = new JMenuItem("Delete a customer");
         JMenuItem loadBankItem = new JMenuItem("Load bankdata");
         JMenuItem saveBankItem = new JMenuItem("Save bank data");
-        JMenuItem saveTransactionsItem = new JMenuItem("Save transaction");
+        JMenuItem printStatementOfAccountTransactionsItem = new JMenuItem("Print account statement");
 
         // Add action listener to show the input panel when clicked
         createCustomerItem.addActionListener(e -> showCustomerInputPanel());
@@ -80,7 +82,7 @@ public class Gui2 extends JFrame
         //Läs till och från filer
         loadBankItem.addActionListener(e -> loadBankPanel());
         saveBankItem.addActionListener(e -> saveBankPanel());
-        saveTransactionsItem.addActionListener(e -> saveTransactionsPanel());
+        printStatementOfAccountTransactionsItem.addActionListener(e -> printStatementOfAccountTransactionsPanel());
 
         //add items to the menu
         menu.add(createCustomerItem);
@@ -93,6 +95,7 @@ public class Gui2 extends JFrame
         menu.add(deleteCustomerItem);
         menu.add(loadBankItem);
         menu.add(saveBankItem);
+        menu.add(printStatementOfAccountTransactionsItem);
 
         menuBar.add(menu);
         setJMenuBar(menuBar);
@@ -387,22 +390,63 @@ public class Gui2 extends JFrame
         setMainPanel(panel);
     }
 
-    //spara transaktioner för ett konto
-    private void saveTransactionsPanel()
-    {
+    //Skriv ut transaktioner för ett konto
+    private  void printStatementOfAccountTransactionsPanel(){
         JPanel panel = new JPanel();
 
-        JButton saveTransactionBtn = new JButton("Save transactions data");
-        saveTransactionBtn.addActionListener(e -> {
-            messageLabel.setText("Saving... (not really, don't wait for a response)");
-        });
+        JButton accountStatementBtn = new JButton("Print account statement");
 
-        panel.add(saveTransactionBtn);
+
+        List<String> customersPnoList = bankController.getCustomers().stream().map(Customer::getpNo).toList();
+        String[] pnoArray = customersPnoList.toArray(new String[0]);
+
+        JLabel personalNumbersLabel = new JLabel("Select personal number ");
+        //Antar att JComboBox inte tar en List <String>, så får konvertera till en "gammaldags" array.
+        personalNumbersField = new JComboBox<>(pnoArray);
+        JButton selectCustomerBtn = new JButton(SEARCH_CUSTOMER_ACCOUNTS);
+
+        // Add ActionListener to print the selected value
+        selectCustomerBtn.addActionListener(new SelectCustomerDropDown());
+
+        JLabel accountNumberLabel = new JLabel(SELECT_ACCOUNT_NUMBER);
+        String[] accountNumbers = {};
+        accountNumbersField = new JComboBox<>(accountNumbers);
+
+        panel.add(personalNumbersLabel);
+        panel.add(personalNumbersField);
+        panel.add(selectCustomerBtn);
+
+        panel.add(accountNumberLabel);
+        panel.add(accountNumbersField);
+
+        accountStatementBtn.addActionListener(new PrintStatementListener());
+
+        panel.add(accountStatementBtn);
         panel.add(messageLabel);
-
+        // Set the panel as the main content panel
         setMainPanel(panel);
     }
+    private class PrintStatementListener implements  ActionListener {
+        @Override
+        public void actionPerformed(ActionEvent e){
+            selectedPNo = (String) personalNumbersField.getSelectedItem();
 
+            String selectedAccountNumber = (String) accountNumbersField.getSelectedItem();
+
+            assert selectedAccountNumber != null;
+            List<String> statement = bankController.printStatementOfAccountTransactions(selectedPNo, Integer.parseInt(selectedAccountNumber));
+            boolean successfulStatement = statement!= null;
+
+            //Skriv ut hur det gick
+            String result = successfulStatement ? "Statement printed. exit program to view file. Can be found in the root folder. ": " Statement not successful";
+
+            logger.info(result);
+            // Show the result in a dialog
+            JOptionPane.showMessageDialog(null, result, "Statement printed. Exit program to view file. ", JOptionPane.INFORMATION_MESSAGE);
+
+
+        }
+    }
     // ActionListener class for creating accounts
     private class CreateSavingsAccountButtonListener implements ActionListener
     {
@@ -417,7 +461,7 @@ public class Gui2 extends JFrame
                 bankController.createSavingsAccount(selectedPNo);
                 logger.info("account created: " + bankController.getCustomer(selectedPNo).getAccounts());
                 JOptionPane.showMessageDialog(null, "account created!", "Create account",
-                        JOptionPane.INFORMATION_MESSAGE);
+                                              JOptionPane.INFORMATION_MESSAGE);
             }
             else
             {
@@ -442,7 +486,7 @@ public class Gui2 extends JFrame
                 assert accountNumber != null;
                 String resultMessage = bankController.closeAccount(selectedPNo, Integer.parseInt(accountNumber));
                 JOptionPane.showMessageDialog(null, "account closed: " + resultMessage, "Close account",
-                        JOptionPane.INFORMATION_MESSAGE);
+                                              JOptionPane.INFORMATION_MESSAGE);
 
             }
             else
@@ -467,7 +511,7 @@ public class Gui2 extends JFrame
                 String resultMessage = bankController.deleteCustomer(selectedPNo).toString();
 
                 JOptionPane.showMessageDialog(null, "Customer deleted: " + resultMessage, "Delete customer",
-                        JOptionPane.INFORMATION_MESSAGE);
+                                              JOptionPane.INFORMATION_MESSAGE);
             }
             else
             {
@@ -518,11 +562,11 @@ public class Gui2 extends JFrame
 
             assert selectedAccountNumber != null;
             boolean successfulWithdrawal = bankController.withdraw(selectedPNo, Integer.parseInt(selectedAccountNumber),
-                    amount);
+                                                                   amount);
 
             //Skriv ut hur det gick
             String result = successfulWithdrawal ? "Withdrawal successful: " + bankController.getAccount(selectedPNo,
-                    Integer.parseInt(selectedAccountNumber)) : " Withdrawal not successful";
+                                                                                                         Integer.parseInt(selectedAccountNumber)) : " Withdrawal not successful";
             logger.info(result);
             // Show the result in a dialog
             JOptionPane.showMessageDialog(null, result, "Withdrawal Result", JOptionPane.INFORMATION_MESSAGE);
@@ -550,11 +594,11 @@ public class Gui2 extends JFrame
             assert selectedAccountNumber != null;
             bankController.deposit(selectedPNo, Integer.parseInt(selectedAccountNumber), amount);
             boolean successfulDeposit = bankController.getAccount(selectedPNo,
-                    Integer.parseInt(selectedAccountNumber)) != null;
+                                                                  Integer.parseInt(selectedAccountNumber)) != null;
 
             //Skriv ut hur det gick
             String result = successfulDeposit ? "Deposit successful: " + bankController.getAccount(selectedPNo,
-                    Integer.parseInt(selectedAccountNumber)) : " Deposit not successful";
+                                                                                                   Integer.parseInt(selectedAccountNumber)) : " Deposit not successful";
             logger.info(result);
             // Show the result in a dialog
             JOptionPane.showMessageDialog(null, result, "Withdrawal Result", JOptionPane.INFORMATION_MESSAGE);
@@ -578,7 +622,7 @@ public class Gui2 extends JFrame
                 messageLabel.setText(
                         "credit account created: " + bankController.getCustomer(selectedPNo).getAccounts());
                 JOptionPane.showMessageDialog(null, "account created!", "Create account",
-                        JOptionPane.INFORMATION_MESSAGE);
+                                              JOptionPane.INFORMATION_MESSAGE);
             }
             else
             {
@@ -602,7 +646,7 @@ public class Gui2 extends JFrame
                 customer = bankController.getCustomer(selectedPNo);
                 // Show the dialog
                 JOptionPane.showMessageDialog(null, customer.toString(), "Customer Information",
-                        JOptionPane.INFORMATION_MESSAGE);
+                                              JOptionPane.INFORMATION_MESSAGE);
             }
             else
             {
@@ -624,7 +668,7 @@ public class Gui2 extends JFrame
             {
                 // Show a message if there are no customers
                 JOptionPane.showMessageDialog(null, "No customers found.", "Customer List",
-                        JOptionPane.INFORMATION_MESSAGE);
+                                              JOptionPane.INFORMATION_MESSAGE);
             }
             else
             {
@@ -649,7 +693,7 @@ public class Gui2 extends JFrame
             {
                 bankController.createCustomer(name, lastNameField.getText().trim(), pNoField.getText().trim());
                 JOptionPane.showMessageDialog(null, "Customer created! ", "Create customer",
-                        JOptionPane.INFORMATION_MESSAGE);
+                                              JOptionPane.INFORMATION_MESSAGE);
             }
             else
             {
