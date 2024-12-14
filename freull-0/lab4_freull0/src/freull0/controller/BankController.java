@@ -71,6 +71,7 @@ public class BankController
      */
     public List<Customer> getCustomers()
     {
+
         return customerLogic.getCustomers();
     }
 
@@ -181,7 +182,19 @@ public class BankController
         Customer customer = customerLogic.findCustomer(pNo);
         return accountLogic.getTransactions(customer, accountId);
     }
-
+    /**
+     * Writes a customers account statement and balance to a text file.
+     * @param pNO personnummer
+     * @param accountNumber kontonummer e.g., 1001
+     * @return
+     */
+    public List<String> printStatementOfAccountTransactions(String pNO, int accountNumber){
+        //Hämta transaktioner och saldo
+        List<String> transactions = getTransactions(pNO, accountNumber);
+        Customer customer = getCustomer(pNO);
+        accountLogic.printStatementOfAccountTransactions(transactions, customer, accountNumber);
+        return transactions;
+    }
     public int createCreditAccount(String pNO)
     {
         Customer customer = customerLogic.findCustomer(pNO);
