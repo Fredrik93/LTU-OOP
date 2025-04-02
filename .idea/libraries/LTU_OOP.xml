@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="LTU-OOP">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/freull-0.zip!/" />
+      <root url="jar://$PROJECT_DIR$/lab4_freull0.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
